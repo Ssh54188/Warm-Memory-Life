@@ -1,0 +1,139 @@
+<!-- 本周概览 — v1.0.3 瘦身版 -->
+<view class="page">
+  <scroll-view class="page__body" scroll-y>
+
+    <!-- ==========================================
+         周导航
+         ========================================== -->
+    <view class="week-nav">
+      <view class="week-nav__arrow" bindtap="onPrevWeek">‹</view>
+      <view class="week-nav__info" bindtap="onCurrentWeek">
+        <text class="week-nav__title">{{year}}年{{month}}月 第{{weekNumber}}周</text>
+        <text class="week-nav__range">{{weekRange}}</text>
+      </view>
+      <view class="week-nav__arrow" bindtap="onNextWeek">›</view>
+      <view class="week-nav__icon" bindtap="goCalendar">📅</view>
+    </view>
+
+    <!-- ==========================================
+         环形进度（纯 CSS 圆环）
+         ========================================== -->
+    <view class="progress-section">
+      <view class="progress-ring">
+        <view class="progress-ring__circle">
+          <view class="progress-ring__left">
+            <view class="progress-ring__left-fill" style="transform: rotate({{weekProgress >= 50 ? (weekProgress - 50) * 3.6 : 0}}deg);"></view>
+          </view>
+          <view class="progress-ring__right">
+            <view class="progress-ring__right-fill" style="transform: rotate({{weekProgress >= 50 ? 180 : weekProgress * 3.6}}deg);"></view>
+          </view>
+        </view>
+        <view class="progress-ring__mask">
+          <view class="progress-ring__text">
+            <text class="progress-ring__percent">{{weekProgress}}%</text>
+            <text class="progress-ring__label">本周完成度</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ==========================================
+         今日摘要卡片
+         ========================================== -->
+    <view class="card">
+      <view class="flex-between mb-sm">
+        <text class="card__title">📅 今日摘要</text>
+        <text class="card__more" bindtap="goTodayDetail">查看更多 ›</text>
+      </view>
+
+      <!-- 今日完成度（单行紧凑） -->
+      <view class="completion-header">
+        <text class="completion-header__label">今日完成度</text>
+        <view class="completion-header__bar-wrap">
+          <view class="completion-header__bar {{todayCompletion >= 100 ? 'completion-header__bar--done' : ''}}" style="width: {{todayCompletion}}%;"></view>
+        </view>
+        <text class="completion-header__count">{{todayStats.todoDone + todayStats.habitDone}}/{{todayStats.todoTotal + todayStats.habitTotal}}</text>
+        <text class="completion-header__percent">{{todayCompletion}}%</text>
+      </view>
+
+      <view class="today-summary">
+        <view class="today-item" bindtap="goTodo">
+          <text class="today-item__icon">✅</text>
+          <view class="today-item__content">
+            <text class="today-item__label">待办</text>
+            <text class="today-item__value">{{todayStats.todoDone}}/{{todayStats.todoTotal}}</text>
+          </view>
+        </view>
+        <view class="today-item" bindtap="goHabits">
+          <text class="today-item__icon">🔥</text>
+          <view class="today-item__content">
+            <text class="today-item__label">习惯</text>
+            <text class="today-item__value">{{todayStats.habitDone}}/{{todayStats.habitTotal}}</text>
+          </view>
+        </view>
+        <view class="today-item" bindtap="goNotes" wx:if="{{todayStats.hasNote}}">
+          <text class="today-item__icon">📝</text>
+          <view class="today-item__content">
+            <text class="today-item__label">笔记</text>
+            <text class="today-item__preview">{{todayStats.notePreview}}</text>
+          </view>
+        </view>
+        <view wx:if="{{!todayStats.hasNote && todayStats.todoTotal === 0 && todayStats.habitTotal === 0}}" class="today-empty">
+          <text>今天还没有记录，开始规划吧</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ==========================================
+         7天待办摘要卡片
+         ========================================== -->
+    <view class="card">
+      <view class="flex-between mb-sm">
+        <text class="card__title">📆 本周概览</text>
+        <text class="card__more" bindtap="goTodo">查看更多 ›</text>
+      </view>
+      <view class="day-cards-row">
+        <view
+          wx:for="{{dayCards}}"
+          wx:key="date"
+          class="day-card {{item.isToday ? 'day-card--today' : ''}}"
+          data-date="{{item.date}}"
+          bindtap="goTodo"
+        >
+          <text class="day-card__label">{{item.label}}</text>
+          <text class="day-card__date">{{item.dateNum}}</text>
+          <text class="day-card__count" wx:if="{{item.todoTotal > 0}}">
+            {{item.todoDone}}/{{item.todoTotal}}
+          </text>
+          <text class="day-card__empty" wx:else>-</text>
+          <view wx:if="{{item.todoDone > 0 && item.todoDone === item.todoTotal}}" class="day-card__dot"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ==========================================
+         快捷入口
+         ========================================== -->
+    <view class="quick-actions">
+      <view class="quick-action" bindtap="goTimeline">
+        <text class="quick-action__icon">⏱️</text>
+        <text class="quick-action__label">时间线</text>
+      </view>
+      <view class="quick-action" bindtap="goQuadrant">
+        <text class="quick-action__icon">📊</text>
+        <text class="quick-action__label">四象限</text>
+      </view>
+      <view class="quick-action" bindtap="goHabits">
+        <text class="quick-action__icon">🔥</text>
+        <text class="quick-action__label">习惯</text>
+      </view>
+      <view class="quick-action" bindtap="goNotes">
+        <text class="quick-action__icon">📝</text>
+        <text class="quick-action__label">笔记</text>
+      </view>
+    </view>
+
+    <!-- 底部留白 -->
+    <view style="height: 60rpx;" />
+  </scroll-view>
+</view>

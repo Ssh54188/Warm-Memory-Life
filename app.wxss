@@ -1,0 +1,257 @@
+/**
+ * 手账周计划 v1.0.2 — 全局样式系统
+ * 设计 Token 基于需求文档 §13 UI 风格规范
+ */
+
+/* ========================================
+   设计令牌（CSS 变量）
+   ======================================== */
+
+page {
+  /* ---- 颜色体系 v1.0.2 ---- */
+  --color-paper: #faf7f2;          /* 纸张底色 — 米白 */
+  --color-paper-dark: #f0ebe0;     /* 纸张暗纹 */
+  --color-primary: #c09880;        /* 主色 — 暖棕 */
+  --color-primary-light: #d4b896;  /* 主色浅 */
+  --color-primary-dark: #a67c52;   /* 主色深 */
+
+  --color-accent-pink: #f8e8e0;    /* 粉 */
+  --color-accent-green: #d4e9d6;   /* 绿 */
+  --color-accent-blue: #dce8f5;    /* 蓝 */
+
+  --color-text: #5c4a3a;           /* 正文深棕 */
+  --color-text-secondary: #8b7355; /* 次要文字中棕 */
+  --color-text-light: #b8a99a;     /* 提示文字 */
+  --color-border: #e0d8cc;         /* 边框 */
+  --color-divider: #efe8dc;        /* 分割线 */
+
+  --color-white: #ffffff;
+  --color-danger: #d4756b;         /* 删除/警告 */
+  --color-success: #7ba587;        /* 完成/成功 */
+
+  /* ---- 四象限颜色 ---- */
+  --color-q1: #e74c3c;             /* 重要且紧急 — 红 */
+  --color-q2: #27ae60;             /* 重要不紧急 — 绿 */
+  --color-q3: #f39c12;             /* 不重要但紧急 — 橙 */
+  --color-q4: #95a5a6;             /* 不重要不紧急 — 灰 */
+
+  /* ---- 间距 ---- */
+  --spacing-xs: 8rpx;
+  --spacing-sm: 16rpx;
+  --spacing-md: 24rpx;
+  --spacing-lg: 32rpx;
+  --spacing-xl: 48rpx;
+
+  /* ---- 字号 ---- */
+  --font-xs: 20rpx;
+  --font-sm: 24rpx;
+  --font-base: 28rpx;
+  --font-lg: 32rpx;
+  --font-xl: 40rpx;
+  --font-title: 48rpx;
+
+  /* ---- 圆角 ---- */
+  --radius-sm: 8rpx;
+  --radius-md: 12rpx;
+  --radius-lg: 24rpx;
+  --radius-full: 9999rpx;
+
+  /* ---- 阴影 ---- */
+  --shadow-sm: 0 2rpx 8rpx rgba(92, 74, 58, 0.06);
+  --shadow-md: 0 4rpx 16rpx rgba(92, 74, 58, 0.10);
+  --shadow-lg: 0 8rpx 24rpx rgba(92, 74, 58, 0.14);
+
+  /* ---- 字体 ---- */
+  --font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+                 "Helvetica Neue", "Ma Shan Zheng", cursive, sans-serif;
+
+  /* 基础设置 */
+  box-sizing: border-box;
+  background-color: var(--color-paper);
+  color: var(--color-text);
+  font-size: var(--font-base);
+  font-family: var(--font-family);
+  line-height: 1.6;
+}
+
+/* ========================================
+   全局工具类
+   ======================================== */
+
+/* 纸张卡片 */
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-md);
+  margin: var(--spacing-sm) var(--spacing-md);
+  border: 1rpx solid var(--color-border);
+}
+
+/* 横线纸张纹理 */
+.lined-paper {
+  background:
+    repeating-linear-gradient(
+      transparent,
+      transparent 47rpx,
+      var(--color-divider) 47rpx,
+      var(--color-divider) 48rpx
+    ),
+    var(--color-paper);
+  background-size: 100% 48rpx;
+  padding: var(--spacing-md);
+  line-height: 48rpx;
+}
+
+/* 手账标签 */
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  background: var(--color-accent-pink);
+  color: var(--color-text);
+}
+
+.tag--high { background: #f8d7da; color: #a94442; }
+.tag--mid  { background: #fef3cd; color: #8a6d3b; }
+.tag--low  { background: var(--color-accent-green); color: #3c6e47; }
+
+/* 按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16rpx 32rpx;
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.96);
+  opacity: 0.85;
+}
+
+.btn--primary {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn--outline {
+  background: transparent;
+  border: 2rpx solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn--danger {
+  background: var(--color-danger);
+  color: var(--color-white);
+}
+
+.btn--sm {
+  padding: 8rpx 20rpx;
+  font-size: var(--font-sm);
+}
+
+/* 文本 */
+.text-secondary { color: var(--color-text-secondary); }
+.text-light     { color: var(--color-text-light); }
+.text-center    { text-align: center; }
+.text-right     { text-align: right; }
+
+/* 弹性布局 */
+.flex       { display: flex; }
+.flex-col   { display: flex; flex-direction: column; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-1     { flex: 1; }
+
+/* 间距 */
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.p-sm  { padding: var(--spacing-sm); }
+.p-md  { padding: var(--spacing-md); }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+
+/* 分隔线 */
+.divider {
+  height: 1rpx;
+  background: var(--color-divider);
+  margin: var(--spacing-sm) 0;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+  color: var(--color-text-light);
+}
+
+.empty-state__icon {
+  font-size: 80rpx;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.6;
+}
+
+.empty-state__text {
+  font-size: var(--font-sm);
+}
+
+/* ========================================
+   全局过渡动画
+   ======================================== */
+
+/* 页面淡入 */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(12rpx); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 列表项交错动画 */
+@keyframes listItemIn {
+  from { opacity: 0; transform: translateX(-16rpx); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* 弹窗淡入 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 按钮点击反馈 */
+.btn:active {
+  transform: scale(0.96);
+  transition: transform 0.1s ease;
+}
+
+/* 可点击元素通用反馈 */
+[bindtap]:active,
+[catchtap]:active {
+  transition: opacity 0.1s ease;
+}
+
+/* 安全区域适配 */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 文本截断 */
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 数字等宽 */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

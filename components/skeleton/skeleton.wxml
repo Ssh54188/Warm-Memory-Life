@@ -1,0 +1,6 @@
+<!-- 骨架屏加载占位 -->
+<view class="skeleton">
+  <view wx:for="{{lines}}" wx:key="*this" class="skeleton__line skeleton__line--{{item.width || 'full'}}">
+    <view class="skeleton__shimmer" />
+  </view>
+</view>

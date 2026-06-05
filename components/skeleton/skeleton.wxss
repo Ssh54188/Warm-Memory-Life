@@ -1,0 +1,24 @@
+/* 骨架屏 */
+.skeleton { padding: var(--spacing-md); }
+.skeleton__line {
+  height: 28rpx;
+  border-radius: var(--radius-sm);
+  background: var(--color-divider);
+  margin-bottom: var(--spacing-sm);
+  overflow: hidden;
+  position: relative;
+}
+.skeleton__line--full  { width: 100%; }
+.skeleton__line--half  { width: 50%; }
+.skeleton__line--third { width: 33%; }
+.skeleton__line--short { width: 66%; }
+.skeleton__line--card  { height: 120rpx; width: 100%; border-radius: var(--radius-md); }
+.skeleton__shimmer {
+  position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0%   { left: -100%; }
+  100% { left: 100%; }
+}

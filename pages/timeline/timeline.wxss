@@ -1,0 +1,170 @@
+/* 时间线视图 — v1.0.2 */
+.page {
+  height: 100vh;
+  background: var(--color-paper);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========================================
+   顶栏
+   ======================================== */
+.tl-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border-bottom: 1rpx solid var(--color-divider);
+  flex-shrink: 0;
+}
+
+.tl-header__title {
+  font-size: var(--font-xl); font-weight: 700;
+  color: var(--color-text);
+}
+
+.tl-header__stats {
+  font-size: var(--font-xs); color: var(--color-text-light);
+}
+
+/* ========================================
+   滚动区
+   ======================================== */
+.tl-scroll {
+  flex: 1; padding: var(--spacing-sm) 0;
+}
+
+.tl-list {
+  padding: 0 var(--spacing-sm);
+}
+
+/* ========================================
+   每一行：左时间轴 + 右卡片
+   ======================================== */
+.tl-row {
+  display: flex;
+  min-height: 120rpx;
+}
+
+/* ---- 左侧时间轴 ---- */
+.tl-left {
+  width: 80rpx;
+  display: flex; flex-direction: column; align-items: center;
+  flex-shrink: 0;
+}
+
+.tl-line {
+  flex: 1; width: 3rpx;
+  background: var(--color-divider);
+}
+
+.tl-dot {
+  width: 40rpx; height: 40rpx;
+  border-radius: 50%;
+  background: var(--color-white);
+  border: 3rpx solid var(--color-border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; z-index: 2;
+}
+
+.tl-dot--today {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  width: 48rpx; height: 48rpx;
+}
+
+.tl-dot__inner {
+  font-size: 18rpx; color: #fff; font-weight: 700;
+}
+
+/* ---- 右侧卡片 ---- */
+.tl-right {
+  flex: 1; min-width: 0;
+  padding: 8rpx 0 24rpx var(--spacing-sm);
+}
+
+.tl-card {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1rpx solid var(--color-border);
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: all 0.12s;
+}
+.tl-card:active {
+  background: var(--color-paper);
+  transform: scale(0.98);
+}
+
+.tl-card__header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.tl-card__date {
+  display: flex; align-items: baseline; gap: var(--spacing-sm);
+}
+
+.tl-card__date-text {
+  font-size: var(--font-lg); font-weight: 700;
+  color: var(--color-text);
+}
+
+.tl-card__weekday {
+  font-size: var(--font-xs); color: var(--color-text-light);
+}
+.tl-card__weekday--today {
+  color: var(--color-primary); font-weight: 600;
+}
+
+.tl-card__arrow {
+  font-size: var(--font-lg); color: var(--color-text-light);
+}
+
+/* 每一行内容 */
+.tl-card__row {
+  display: flex; align-items: center; gap: 8rpx;
+  padding: 6rpx 0;
+}
+
+.tl-card__icon {
+  font-size: 24rpx; flex-shrink: 0;
+}
+
+.tl-card__label {
+  font-size: var(--font-xs); color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.tl-card__value {
+  font-size: var(--font-sm); color: var(--color-text);
+  font-weight: 500; margin-right: var(--spacing-xs);
+}
+
+.tl-card__bar {
+  flex: 1; height: 8rpx;
+  background: var(--color-divider);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.tl-card__bar-inner {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s;
+}
+
+.tl-card__note-preview {
+  font-size: var(--font-xs); color: var(--color-text-light);
+  font-style: italic;
+  flex: 1; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.tl-card__empty {
+  font-size: var(--font-xs); color: var(--color-text-light);
+  font-style: italic; padding: 4rpx 0;
+}

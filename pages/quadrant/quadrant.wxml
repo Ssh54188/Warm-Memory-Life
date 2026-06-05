@@ -1,0 +1,102 @@
+<!-- 四象限优先级管理 — v1.0.2 -->
+<view class="page">
+  <!-- 标题 -->
+  <view class="q-header">
+    <text class="q-header__title">四象限 · 优先级矩阵</text>
+    <text class="q-header__hint">长按任务拖拽到目标象限</text>
+  </view>
+
+  <!-- 四象限网格 -->
+  <view class="q-grid">
+    <view
+      wx:for="{{quadrants}}"
+      wx:key="key"
+      class="q-cell {{dragTargetKey === item.key ? 'q-cell--drop' : ''}}"
+      style="border-top: 6rpx solid {{item.color}};"
+    >
+      <!-- 象限标题 -->
+      <view class="q-cell__header" style="background: {{item.color}}18;">
+        <text class="q-cell__label" style="color: {{item.color}};">{{item.label}}</text>
+        <text class="q-cell__count">{{item.tasks.length}}项</text>
+      </view>
+
+      <!-- 输入框 -->
+      <view class="q-cell__input-row">
+        <input
+          class="q-cell__input"
+          placeholder="添加任务..."
+          value="{{quadrantInputs[item.key] || ''}}"
+          data-key="{{item.key}}"
+          bindinput="onInput"
+          bindconfirm="onAdd"
+          confirm-type="done"
+        />
+        <view class="q-cell__add btn btn--primary btn--sm" data-key="{{item.key}}" bindtap="onAdd">
+          <text>+</text>
+        </view>
+      </view>
+
+      <!-- 任务列表 -->
+      <scroll-view class="q-cell__tasks" scroll-y>
+        <view wx:if="{{item.tasks.length === 0}}" class="q-cell__empty">暂无任务</view>
+        <view
+          wx:for="{{item.tasks}}"
+          wx:key="id"
+          wx:for-item="task"
+          class="q-task {{task.done ? 'q-task--done' : ''}} {{editingId === task.id ? 'q-task--editing' : ''}} {{dragging && dragTask === task.id ? 'q-task--dragging' : ''}}"
+          data-id="{{task.id}}"
+          data-key="{{item.key}}"
+          bindlongpress="onLongPress"
+          catchtouchmove="onTouchMove"
+          catchtouchend="onTouchEnd"
+        >
+          <!-- 复选框 -->
+          <view
+            class="q-task__check {{task.done ? 'q-task__check--done' : ''}}"
+            data-key="{{item.key}}"
+            data-id="{{task.id}}"
+            catchtap="onToggle"
+          >
+            <text wx:if="{{task.done}}">✓</text>
+          </view>
+
+          <!-- 文本（双击编辑） -->
+          <view wx:if="{{editingId !== task.id}}" class="q-task__text-wrap" data-key="{{item.key}}" data-id="{{task.id}}" catchtap="onDoubleTap">
+            <text class="q-task__text">{{task.text}}</text>
+          </view>
+
+          <!-- 编辑模式 -->
+          <input
+            wx:else
+            class="q-task__edit-input"
+            value="{{editingText}}"
+            data-key="{{item.key}}"
+            bindinput="onEditInput"
+            bindconfirm="onEditConfirm"
+            bindblur="onEditCancel"
+            focus="{{true}}"
+          />
+
+          <!-- 删除 -->
+          <view class="q-task__delete" data-key="{{item.key}}" data-id="{{task.id}}" catchtap="onDelete">
+            <text>×</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 底部统计 -->
+  <view class="q-stats">
+    <view wx:for="{{quadrants}}" wx:key="key" class="q-stats__item">
+      <view class="q-stats__dot" style="background: {{item.color}};"></view>
+      <text class="q-stats__label">{{item.label.split('且')[0]}}</text>
+      <text class="q-stats__num">{{stats[item.key] || 0}}项</text>
+    </view>
+  </view>
+
+  <!-- 拖拽预览浮层 -->
+  <view wx:if="{{dragging}}" class="drag-preview" style="left: {{dragX}}px; top: {{dragY}}px;">
+    <text>📌 移动中</text>
+  </view>
+</view>

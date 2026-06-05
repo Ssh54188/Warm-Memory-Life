@@ -1,0 +1,371 @@
+/* 待办事项 — v1.0.2 */
+.page {
+  min-height: 100vh;
+  background: var(--color-paper);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================
+   周导航
+   ======================================== */
+.week-nav {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-sm);
+  gap: var(--spacing-xs);
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.week-nav__arrow {
+  width: 52rpx;
+  height: 52rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: var(--color-primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.week-nav__days {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.week-days {
+  display: flex;
+  gap: 8rpx;
+}
+
+.week-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10rpx 20rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-white);
+  border: 1rpx solid var(--color-divider);
+  flex-shrink: 0;
+}
+
+.week-day--active {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.week-nav__history {
+  width: 52rpx;
+  height: 52rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: var(--color-text-secondary);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ========================================
+   统计栏
+   ======================================== */
+.stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.stats-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+/* ========================================
+   待办列表
+   ======================================== */
+.page__body {
+  flex: 1;
+  padding-bottom: 140rpx;
+}
+
+.todo-list {
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1rpx solid var(--color-border);
+}
+
+.todo-item--done {
+  opacity: 0.5;
+}
+
+.todo-item--done .todo-text {
+  text-decoration: line-through;
+}
+
+.todo-check {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: var(--radius-sm);
+  border: 3rpx solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  flex-shrink: 0;
+}
+
+.todo-check--done {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.todo-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.todo-text {
+  font-size: var(--font-base);
+  color: var(--color-text);
+}
+
+/* quadrant priority tags */
+.tag {
+  font-size: 18rpx;
+  padding: 2rpx 10rpx;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  background: #eaecee;
+  color: #5d6d7e;
+}
+.tag--urgent-important              { background: #fde8e8; color: #c0392b; }
+.tag--not-urgent-important          { background: #e8f5e9; color: #1e8449; }
+.tag--urgent-not-important          { background: #fef3e2; color: #b8730a; }
+.tag--not-urgent-not-important      { background: #eaecee; color: #5d6d7e; }
+/* 兼容旧数据 */
+.tag--low                           { background: #eaecee; color: #5d6d7e; }
+.tag--mid                           { background: #fef3e2; color: #b8730a; }
+.tag--high                          { background: #fde8e8; color: #c0392b; }
+
+.todo-delete {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: var(--color-text-light);
+  opacity: 0.4;
+}
+
+.todo-delete:active {
+  opacity: 1;
+  color: var(--color-danger);
+}
+
+/* ========================================
+   底部象限选择 + 输入栏
+   ======================================== */
+.chat-bar-wrap {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 10;
+  background: var(--color-white);
+  border-top: 1rpx solid var(--color-divider);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.quadrant-selector {
+  display: flex;
+  gap: 10rpx;
+  padding: 10rpx var(--spacing-sm);
+}
+
+.quadrant-tag {
+  flex: 1;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  border: 2rpx solid transparent;
+  transition: all 0.15s;
+}
+
+/* 紧急重要 - 红 */
+.q-red {
+  background: #fde8e8;
+  color: #c0392b;
+  border-color: #fde8e8;
+}
+.q-red.quadrant-tag--active {
+  background: #c0392b;
+  color: #fff;
+  border-color: #c0392b;
+  font-weight: 600;
+}
+
+/* 重要 - 绿 */
+.q-green {
+  background: #e8f5e9;
+  color: #1e8449;
+  border-color: #e8f5e9;
+}
+.q-green.quadrant-tag--active {
+  background: #1e8449;
+  color: #fff;
+  border-color: #1e8449;
+  font-weight: 600;
+}
+
+/* 紧急 - 橙 */
+.q-orange {
+  background: #fef3e2;
+  color: #b8730a;
+  border-color: #fef3e2;
+}
+.q-orange.quadrant-tag--active {
+  background: #b8730a;
+  color: #fff;
+  border-color: #b8730a;
+  font-weight: 600;
+}
+
+/* 普通 - 灰 */
+.q-gray {
+  background: #eaecee;
+  color: #5d6d7e;
+  border-color: #eaecee;
+}
+.q-gray.quadrant-tag--active {
+  background: #5d6d7e;
+  color: #fff;
+  border-color: #5d6d7e;
+  font-weight: 600;
+}
+
+.chat-bar {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 8rpx var(--spacing-sm) 12rpx var(--spacing-sm);
+}
+
+.chat-bar__input-wrap {
+  flex: 1; display: flex; align-items: center;
+  background: var(--color-paper);
+  border-radius: 32rpx; padding: 0 var(--spacing-sm);
+  border: 1rpx solid var(--color-divider);
+}
+
+.chat-bar__input {
+  flex: 1; height: 64rpx; font-size: var(--font-sm);
+  background: transparent;
+}
+
+.chat-bar__clear {
+  width: 44rpx; height: 44rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24rpx; flex-shrink: 0; opacity: 0.5;
+}
+
+.chat-bar__send {
+  padding: 12rpx 24rpx;
+  border-radius: 32rpx;
+  background: var(--color-divider);
+  color: var(--color-text-light);
+  font-size: var(--font-sm); font-weight: 500;
+  flex-shrink: 0; transition: all 0.15s;
+}
+.chat-bar__send--ready {
+  background: var(--color-primary); color: #fff;
+}
+
+/* ========================================
+   历史侧边栏
+   ======================================== */
+.history-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  z-index: 1000;
+}
+
+.history-panel {
+  width: 500rpx;
+  height: 100%;
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.25s ease;
+}
+
+.history-panel__title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.history-panel__list {
+  flex: 1;
+  padding: var(--spacing-sm);
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  margin-bottom: 4rpx;
+}
+
+.history-item:active {
+  background: var(--color-paper);
+}
+
+.history-item--active {
+  background: var(--color-primary-light);
+}
+
+.history-item__date {
+  font-size: var(--font-sm);
+  color: var(--color-text);
+}
+
+.history-item__weekday {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}

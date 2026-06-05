@@ -1,0 +1,314 @@
+/* 习惯打卡 — v1.0.3 */
+.page {
+  min-height: 100vh;
+  background: var(--color-paper);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================
+   周导航
+   ======================================== */
+.week-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  gap: var(--spacing-md);
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.week-nav__arrow {
+  width: 56rpx; height: 56rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 44rpx; color: var(--color-primary);
+  border-radius: 50%;
+}
+
+.week-nav__arrow:active {
+  background: var(--color-divider);
+}
+
+.week-nav__info {
+  flex: 1; text-align: center;
+}
+
+.week-nav__range {
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* ========================================
+   统计面板
+   ======================================== */
+.stats-panel {
+  display: flex;
+  padding: var(--spacing-sm) var(--spacing-md);
+  gap: var(--spacing-sm);
+}
+
+.stats-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-xs);
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.stats-card--highlight {
+  background: linear-gradient(135deg, #f0f7f1, var(--color-white));
+  border: 1rpx solid var(--color-accent-green);
+}
+
+.stats-card__num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.stats-card__label {
+  font-size: 20rpx;
+  color: var(--color-text-light);
+  margin-top: 2rpx;
+}
+
+/* ========================================
+   打卡网格
+   ======================================== */
+.page__body {
+  flex: 1;
+  padding-bottom: 100rpx;
+}
+
+.habit-grid {
+  padding: var(--spacing-sm) var(--spacing-sm);
+}
+
+/* 表头 */
+.habit-header {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 2rpx solid var(--color-primary-light);
+  gap: 4rpx;
+}
+
+.habit-header__name {
+  width: 180rpx;
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+
+.habit-header__day {
+  flex: 1;
+  text-align: center;
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+}
+
+/* 习惯行 */
+.habit-row {
+  display: flex;
+  align-items: center;
+  padding: 4rpx 0;
+  border-bottom: 1rpx solid var(--color-divider);
+  gap: 4rpx;
+}
+
+.habit-row__info {
+  width: 180rpx;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  flex-shrink: 0;
+}
+
+.habit-row__emoji {
+  font-size: 28rpx;
+}
+
+.habit-row__name {
+  font-size: var(--font-sm);
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 打卡格 */
+.habit-cell {
+  flex: 1;
+  height: 60rpx;
+  margin: 3rpx 2rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  border: 2rpx solid var(--color-divider);
+  font-size: var(--font-sm);
+  transition: all 0.12s ease;
+}
+
+.habit-cell--done {
+  background: #e8f5e9;
+  border-color: var(--color-success);
+  color: var(--color-success);
+  animation: popIn 0.25s ease;
+}
+
+.habit-cell--today {
+  border-color: var(--color-primary);
+  border-width: 3rpx;
+  background: rgba(192, 152, 128, 0.06);
+}
+
+.habit-cell--today.habit-cell--done {
+  background: #e8f5e9;
+  border-color: var(--color-primary);
+  border-width: 3rpx;
+}
+
+/* ========================================
+   停用习惯
+   ======================================== */
+.inactive-section {
+  padding: var(--spacing-md);
+}
+
+.section-title {
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+}
+
+.inactive-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.inactive-item__emoji {
+  font-size: 28rpx;
+}
+
+.inactive-item__name {
+  flex: 1;
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+}
+
+.inactive-item__action {
+  font-size: var(--font-xs);
+  color: var(--color-primary);
+  padding: 4rpx 12rpx;
+}
+
+.inactive-item__action--del {
+  color: var(--color-danger);
+}
+
+/* ========================================
+   底部
+   ======================================== */
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
+  background: var(--color-white);
+  border-top: 1rpx solid var(--color-divider);
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 10;
+}
+
+/* ========================================
+   弹窗
+   ======================================== */
+.modal-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s;
+}
+
+.modal {
+  width: 620rpx;
+  max-height: 80vh;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  overflow-y: auto;
+}
+
+.modal__title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+  display: block;
+}
+
+.modal__label {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.modal__input-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.modal__emoji-preview {
+  font-size: 48rpx;
+  min-width: 64rpx;
+  text-align: center;
+}
+
+.modal__input {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 var(--spacing-sm);
+  border-radius: var(--radius-md);
+  background: var(--color-paper);
+  border: 2rpx solid var(--color-border);
+  font-size: var(--font-base);
+  box-sizing: border-box;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+@keyframes popIn {
+  0%   { transform: scale(0.7); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

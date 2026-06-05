@@ -1,0 +1,8 @@
+/* 用户协议 */
+.page { min-height: 100vh; background: var(--color-paper); }
+.page__body { padding: var(--spacing-md); }
+.agreement-content { background: var(--color-white); border-radius: var(--radius-md); padding: var(--spacing-xl); box-shadow: var(--shadow-sm); }
+.agreement-title { font-size: var(--font-xl); font-weight: 700; color: var(--color-text); display: block; text-align: center; margin-bottom: var(--spacing-sm); }
+.agreement-date { font-size: var(--font-xs); color: var(--color-text-light); display: block; text-align: center; margin-bottom: var(--spacing-xl); }
+.agreement-h2 { font-size: var(--font-lg); font-weight: 600; color: var(--color-text); margin-top: var(--spacing-lg); margin-bottom: var(--spacing-sm); display: block; }
+.agreement-text { font-size: var(--font-sm); color: var(--color-text-secondary); line-height: 1.8; display: block; margin-bottom: 4rpx; }

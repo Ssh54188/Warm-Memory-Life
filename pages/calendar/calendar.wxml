@@ -1,0 +1,100 @@
+<!-- 日程页 — v1.0.2：大日历 + 每日象限 + 待办联动 -->
+<view class="page" bindtouchstart="onSwipeStart" bindtouchend="onSwipeEnd">
+
+  <!-- ========== 日历区（放大） ========== -->
+  <view class="cal-section">
+    <view class="cal-header">
+      <view class="cal-header__nav" bindtap="onPrevMonth">‹</view>
+      <view class="cal-header__center" bindtap="onToday">
+        <text class="cal-header__title">{{year}}年 {{month}}月</text>
+        <text wx:if="{{!isCurrentMonth}}" class="cal-header__back">回今天</text>
+      </view>
+      <view class="cal-header__nav" bindtap="onNextMonth">›</view>
+    </view>
+
+    <view class="cal-weekdays">
+      <text wx:for="{{weekLabels}}" wx:key="*this"
+        class="cal-weekdays__item {{item === '日' || item === '六' ? 'cal-weekdays__item--weekend' : ''}}">{{item}}</text>
+    </view>
+
+    <view class="cal-grid">
+      <view wx:for="{{cells}}" wx:key="fullDate"
+        class="cal-cell {{item.isOtherMonth ? 'cal-cell--other' : ''}} {{item.isSelected ? 'cal-cell--selected' : ''}} {{item.isToday ? 'cal-cell--today' : ''}}"
+        data-index="{{index}}" bindtap="onCellTap">
+
+        <!-- 日期数字 -->
+        <text class="cal-cell__day {{item.isWeekend && !item.isToday ? 'cal-cell__day--weekend' : ''}}">{{item.day}}</text>
+
+        <!-- 待办文字标签 -->
+        <view wx:if="{{!item.isOtherMonth && item.todoPreviews.length > 0}}" class="cal-cell__labels">
+          <text wx:for="{{item.todoPreviews}}" wx:key="*this" class="cal-cell__todo-text">{{item}}</text>
+        </view>
+
+        <!-- 状态点 -->
+        <view wx:if="{{!item.isOtherMonth && !item.isEmpty}}" class="cal-cell__dots">
+          <view wx:if="{{item.todoDone > 0 && item.todoDone === item.todoTotal && item.todoTotal > 0}}" class="cal-dot cal-dot--done"></view>
+          <view wx:if="{{item.todoTotal > 0 && item.todoDone < item.todoTotal}}" class="cal-dot cal-dot--pending"></view>
+          <view wx:if="{{item.hasNote}}" class="cal-dot cal-dot--note"></view>
+          <view wx:if="{{item.hasQuadrant}}" class="cal-dot cal-dot--quad"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 选中日期详情区 ========== -->
+  <view class="detail-bar">
+    <text class="detail-bar__date">{{activeDateLabel || '选择日期'}}</text>
+    <text class="detail-bar__summary" wx:if="{{activeTodoStats.total > 0 || activeQuadTotal > 0}}">
+      待办{{activeTodoStats.done}}/{{activeTodoStats.total}} · 象限{{activeQuadTotal}}项
+    </text>
+  </view>
+
+  <!-- ========== 四象限 + 待办联动区 ========== -->
+  <scroll-view class="content-section" scroll-y>
+    <!-- 四象限 2×2 -->
+    <view class="q-grid">
+      <view wx:for="{{quadrants}}" wx:key="key"
+        class="q-cell {{dragTargetKey === item.key ? 'q-cell--drop' : ''}}"
+        style="border-top: 6rpx solid {{item.color}};">
+
+        <view class="q-cell__head">
+          <text class="q-cell__label" style="color: {{item.color}};">{{item.label}}</text>
+          <text class="q-cell__count">{{item.tasks.length}}</text>
+        </view>
+
+        <!-- 该象限的待办项（来自待办列表） -->
+        <view wx:if="{{item.linkedTodos.length > 0}}" class="q-linked">
+          <view wx:for="{{item.linkedTodos}}" wx:key="id" wx:for-item="lt"
+            class="q-linked__item {{lt.done ? 'q-linked__item--done' : ''}}">
+            <view class="q-linked__dot" style="background: {{item.color}};"></view>
+            <text class="q-linked__text">{{lt.text}}</text>
+          </view>
+        </view>
+
+        <!-- 四象限自有任务 -->
+        <view wx:if="{{item.tasks.length > 0}}" class="q-tasks">
+          <view wx:for="{{item.tasks}}" wx:key="id" wx:for-item="task"
+            class="q-task {{task.done ? 'q-task--done' : ''}} {{dragging && dragTask === task.id ? 'q-task--dragging' : ''}}"
+            data-id="{{task.id}}" data-key="{{item.key}}"
+            bindlongpress="onLongPress" catchtouchmove="onTouchMove" catchtouchend="onTouchEnd">
+            <view class="q-task__check {{task.done ? 'q-task__check--done' : ''}}"
+              data-key="{{item.key}}" data-id="{{task.id}}" catchtap="onQToggle">✓</view>
+            <text class="q-task__text">{{task.text}}</text>
+            <view class="q-task__del" data-key="{{item.key}}" data-id="{{task.id}}" catchtap="onQDelete">×</view>
+          </view>
+        </view>
+
+        <!-- 快速输入 -->
+        <view class="q-cell__input">
+          <input placeholder="+ 添加" value="{{quadrantInputs[item.key] || ''}}"
+            data-key="{{item.key}}" bindinput="onQInput" bindconfirm="onQAdd" confirm-type="done"/>
+        </view>
+      </view>
+    </view>
+
+    <view style="height: 60rpx;"></view>
+  </scroll-view>
+
+  <!-- 拖拽预览 -->
+  <view wx:if="{{dragging}}" class="drag-preview" style="left: {{dragX}}px; top: {{dragY}}px;">📌</view>
+</view>

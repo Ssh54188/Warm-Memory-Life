@@ -1,0 +1,251 @@
+/* 记事本 — v1.0.2 */
+.page {
+  min-height: 100vh;
+  background: var(--color-paper);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================
+   日期导航
+   ======================================== */
+.note-nav {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-sm);
+  border-bottom: 1rpx solid var(--color-divider);
+  gap: var(--spacing-xs);
+}
+
+.note-nav__arrow {
+  width: 52rpx;
+  height: 52rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: var(--color-primary);
+  border-radius: 50%;
+}
+
+.note-nav__info {
+  flex: 1;
+  text-align: center;
+}
+
+.note-nav__date {
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.note-nav__history {
+  width: 52rpx;
+  height: 52rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: var(--color-text-secondary);
+}
+
+/* ========================================
+   心情条
+   ======================================== */
+.mood-bar {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-bottom: 1rpx solid var(--color-divider);
+  white-space: nowrap;
+  background: var(--color-white);
+}
+
+.mood-list {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.mood-item {
+  font-size: 36rpx;
+  padding: 4rpx 8rpx;
+  border-radius: var(--radius-full);
+}
+
+.mood-item:active {
+  transform: scale(1.2);
+  background: var(--color-accent-pink);
+}
+
+/* ========================================
+   横线纸张
+   ======================================== */
+.page__body {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.paper {
+  min-height: 400rpx;
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl) 52rpx;
+  background:
+    linear-gradient(to right, transparent 40rpx, #e8c9c0 40rpx, #e8c9c0 42rpx, transparent 42rpx),
+    repeating-linear-gradient(transparent, transparent 47rpx, var(--color-divider) 47rpx, var(--color-divider) 48rpx);
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.paper__textarea {
+  width: 100%;
+  min-height: 200rpx;
+  font-size: var(--font-lg);
+  font-family: var(--font-family);
+  color: var(--color-text);
+  line-height: 48rpx;
+  background: transparent;
+  padding: 0;
+}
+
+/* ========================================
+   底部栏
+   ======================================== */
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  padding-bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom));
+  background: var(--color-white);
+  border-top: 1rpx solid var(--color-divider);
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+}
+
+.bottom-bar__stats {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.bottom-bar__sep { color: var(--color-border); }
+
+.bottom-bar__unsaved {
+  color: var(--color-danger);
+  font-size: 16rpx;
+}
+
+.bottom-bar__actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.bottom-btn {
+  font-size: 32rpx;
+  padding: 8rpx;
+}
+
+/* ========================================
+   模板弹窗
+   ======================================== */
+.modal-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 560rpx;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+}
+
+.modal__title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+  display: block;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spacing-md);
+}
+
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.template-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  background: var(--color-paper);
+}
+
+.template-item:active { background: var(--color-accent-pink); }
+
+.template-item__icon { font-size: 36rpx; }
+.template-item__name { font-size: var(--font-sm); color: var(--color-text); }
+
+/* ========================================
+   历史侧边栏
+   ======================================== */
+.history-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  z-index: 1000;
+}
+
+.history-panel {
+  width: 500rpx;
+  height: 100%;
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+}
+
+.history-panel__title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.history-panel__list {
+  flex: 1;
+  padding: var(--spacing-sm);
+}
+
+.history-item {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
+  color: var(--color-text);
+  margin-bottom: 4rpx;
+}
+
+.history-item:active { background: var(--color-paper); }
+
+.history-item--active {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.history-panel__empty {
+  text-align: center;
+  color: var(--color-text-light);
+  padding: var(--spacing-xl);
+  font-size: var(--font-sm);
+}

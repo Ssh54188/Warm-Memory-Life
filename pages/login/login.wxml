@@ -1,0 +1,92 @@
+<!-- 登录页 — v1.0.2 -->
+<view class="page">
+  <!-- Logo / 品牌区 -->
+  <view class="brand">
+    <text class="brand__icon">📒</text>
+    <text class="brand__title">手账周计划</text>
+    <text class="brand__desc">温暖你的每一天</text>
+  </view>
+
+  <!-- 已登录状态 -->
+  <view wx:if="{{alreadyLoggedIn}}" class="logged-in-card">
+    <text class="logged-in__icon">✅</text>
+    <text class="logged-in__title">已登录</text>
+    <text class="logged-in__user">{{currentUser.nickName || currentUser.email || currentUser.phone || '当前账号'}}</text>
+    <view class="logged-in__actions">
+      <view class="btn btn--outline btn--sm" bindtap="onLogout">退出登录</view>
+    </view>
+    <view class="login-divider"><text>切换账号</text></view>
+  </view>
+
+  <!-- 登录 Tab 切换 -->
+  <view class="login-tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="login-tab {{loginTab === item.key ? 'login-tab--active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onSwitchTab"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 微信登录 -->
+  <view wx:if="{{loginTab === 'wechat'}}" class="login-panel">
+    <button
+      class="login-btn login-btn--wechat"
+      bindtap="onWechatLogin"
+      loading="{{loading}}"
+    >
+      <text class="login-btn__icon">💬</text>
+      <text>微信一键登录</text>
+    </button>
+    <text class="login-hint">点击即可快速登录，无需额外授权</text>
+  </view>
+
+  <!-- 手机号登录 -->
+  <view wx:if="{{loginTab === 'phone'}}" class="login-panel">
+    <button
+      class="login-btn login-btn--phone"
+      open-type="getPhoneNumber"
+      bindgetphonenumber="onGetPhone"
+      loading="{{loading}}"
+    >
+      <text class="login-btn__icon">📱</text>
+      <text>微信绑定手机号登录</text>
+    </button>
+    <text class="login-hint">需使用已绑定手机号的微信号</text>
+  </view>
+
+  <!-- 邮箱登录 -->
+  <view wx:if="{{loginTab === 'email'}}" class="login-panel">
+    <view class="form-group">
+      <text class="form-label">邮箱</text>
+      <input
+        class="form-input"
+        type="text"
+        placeholder="请输入邮箱地址"
+        value="{{email}}"
+        bindinput="onEmailInput"
+      />
+    </view>
+    <view class="form-group">
+      <text class="form-label">密码</text>
+      <input
+        class="form-input"
+        type="password"
+        placeholder="请输入密码"
+        value="{{emailPwd}}"
+        bindinput="onPwdInput"
+        bindconfirm="onEmailLogin"
+      />
+    </view>
+    <button class="login-btn login-btn--email" bindtap="onEmailLogin" loading="{{loading}}">
+      <text>登录</text>
+    </button>
+  </view>
+
+  <!-- 跳过登录 -->
+  <view wx:if="{{showSkip}}" class="skip-section">
+    <text class="skip-link" bindtap="onSkip">跳过登录，先体验一下 →</text>
+    <text class="skip-hint">数据将保存在本地，登录后可云端同步</text>
+  </view>
+</view>

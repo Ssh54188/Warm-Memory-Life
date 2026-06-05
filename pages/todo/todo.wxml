@@ -1,0 +1,122 @@
+<!-- 待办事项 — v1.0.2 -->
+<view class="page">
+  <!-- 周导航 -->
+  <view class="week-nav">
+    <view class="week-nav__arrow" bindtap="onPrevWeek">‹</view>
+    <scroll-view class="week-nav__days" scroll-x>
+      <view class="week-days">
+        <view
+          wx:for="{{weekDays}}"
+          wx:key="date"
+          class="week-day {{activeDate === item.date ? 'week-day--active' : ''}}"
+          data-date="{{item.date}}"
+          bindtap="onSelectDate"
+        >
+          <text class="week-day__label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="week-nav__arrow" bindtap="onNextWeek">›</view>
+    <view class="week-nav__history" bindtap="onToggleHistory">☰</view>
+  </view>
+
+  <!-- 统计栏 -->
+  <view class="stats-bar">
+    <text>{{activeDateNum}} {{activeDateLabel}}</text>
+    <view class="stats-bar__right">
+      <text class="text-secondary">完成 {{stats.done}}/{{stats.total}}</text>
+      <text wx:if="{{stats.total > 0}}" class="text-light">（{{stats.rate}}%）</text>
+    </view>
+  </view>
+
+  <scroll-view class="page__body" scroll-y>
+    <!-- 待办列表 -->
+    <view wx:if="{{todos.length > 0}}" class="todo-list">
+      <view
+        wx:for="{{todos}}"
+        wx:key="id"
+        class="todo-item {{item.done ? 'todo-item--done' : ''}}"
+      >
+        <view
+          class="todo-check {{item.done ? 'todo-check--done' : ''}}"
+          data-id="{{item.id}}"
+          catchtap="onToggle"
+        >
+          <text wx:if="{{item.done}}">✓</text>
+        </view>
+        <view class="todo-info" data-id="{{item.id}}" catchtap="onToggle">
+          <text class="todo-text">{{item.text}}</text>
+          <view class="tag tag--{{item.priority}}">
+            {{item.priority === 'urgent-important' ? '紧急重要' : item.priority === 'not-urgent-important' ? '重要' : item.priority === 'urgent-not-important' ? '紧急' : '普通'}}
+          </view>
+        </view>
+        <view class="todo-delete" data-id="{{item.id}}" catchtap="onDelete">
+          <text>×</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:else class="empty-state">
+      <text class="empty-state__icon">📝</text>
+      <text class="empty-state__text">今天还没有待办事项\n点击下方输入框添加吧</text>
+    </view>
+  </scroll-view>
+
+  <!-- 底部象限选择 + 输入栏 -->
+  <view class="chat-bar-wrap">
+    <view class="quadrant-selector">
+      <view class="quadrant-tag q-red {{priority === 'urgent-important' ? 'quadrant-tag--active' : ''}}" data-priority="urgent-important" bindtap="onSelectQuadrant">
+        <text>紧急重要</text>
+      </view>
+      <view class="quadrant-tag q-green {{priority === 'not-urgent-important' ? 'quadrant-tag--active' : ''}}" data-priority="not-urgent-important" bindtap="onSelectQuadrant">
+        <text>重要</text>
+      </view>
+      <view class="quadrant-tag q-orange {{priority === 'urgent-not-important' ? 'quadrant-tag--active' : ''}}" data-priority="urgent-not-important" bindtap="onSelectQuadrant">
+        <text>紧急</text>
+      </view>
+      <view class="quadrant-tag q-gray {{priority === 'not-urgent-not-important' ? 'quadrant-tag--active' : ''}}" data-priority="not-urgent-not-important" bindtap="onSelectQuadrant">
+        <text>普通</text>
+      </view>
+    </view>
+    <view class="chat-bar">
+      <view class="chat-bar__input-wrap">
+        <input
+          class="chat-bar__input"
+          value="{{inputText}}"
+          placeholder="输入待办事项..."
+          confirm-type="send"
+          bindinput="onInput"
+          bindconfirm="onAdd"
+          adjust-position="{{true}}"
+          cursor-spacing="12"
+        />
+        <view wx:if="{{stats.done > 0}}" class="chat-bar__clear" bindtap="onClearDone">
+          <text>🧹</text>
+        </view>
+      </view>
+      <view class="chat-bar__send {{inputText ? 'chat-bar__send--ready' : ''}}" bindtap="onAdd">
+        <text>发送</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史侧边栏 -->
+  <view wx:if="{{showHistory}}" class="history-mask" bindtap="onToggleHistory">
+    <view class="history-panel" catchtap="">
+      <text class="history-panel__title">历史记录</text>
+      <scroll-view class="history-panel__list" scroll-y>
+        <view
+          wx:for="{{historyDates}}"
+          wx:key="date"
+          class="history-item {{activeDate === item.date ? 'history-item--active' : ''}}"
+          data-date="{{item.date}}"
+          bindtap="onSelectHistory"
+        >
+          <text class="history-item__date">{{item.date}}</text>
+          <text class="history-item__weekday">{{item.weekday}}</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

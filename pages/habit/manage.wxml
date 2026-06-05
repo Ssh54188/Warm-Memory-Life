@@ -1,0 +1,68 @@
+<!-- 习惯库管理 — v1.0.2 -->
+<view class="page">
+  <view class="header">
+    <text class="header__title">习惯库</text>
+    <text class="header__count">{{habits.length}} 个习惯</text>
+  </view>
+
+  <scroll-view class="page__body" scroll-y>
+    <view wx:if="{{habits.length > 0}}" class="habit-list">
+      <view
+        wx:for="{{habits}}"
+        wx:key="name"
+        class="habit-item {{item.active === false ? 'habit-item--inactive' : ''}}"
+      >
+        <text class="habit-item__emoji">{{item.emoji || '⭐'}}</text>
+        <text class="habit-item__name">{{item.name}}</text>
+        <switch
+          class="habit-item__switch"
+          checked="{{item.active !== false}}"
+          data-name="{{item.name}}"
+          bindchange="onToggle"
+          color="#c09880"
+        />
+        <text class="habit-item__del" data-name="{{item.name}}" bindtap="onDelete">删除</text>
+      </view>
+    </view>
+
+    <view wx:else class="empty-state">
+      <text class="empty-state__icon">📭</text>
+      <text class="empty-state__text">还没有习惯</text>
+    </view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <view class="btn btn--primary" bindtap="onShowAdd">+ 新建习惯</view>
+  </view>
+
+  <!-- 添加弹窗 -->
+  <view wx:if="{{showAdd}}" class="modal-mask" bindtap="onHideAdd">
+    <view class="modal" catchtap="">
+      <text class="modal__title">新建习惯</text>
+      <text class="modal__label">选择图标</text>
+      <view class="emoji-grid">
+        <view
+          wx:for="{{emojiPresets}}"
+          wx:key="*this"
+          class="emoji-item {{newEmoji === item ? 'emoji-item--active' : ''}}"
+          data-emoji="{{item}}"
+          bindtap="onSelectEmoji"
+        >{{item}}</view>
+      </view>
+      <text class="modal__label">习惯名称</text>
+      <input
+        class="modal__input"
+        value="{{newName}}"
+        placeholder="如：每天阅读"
+        bindinput="onNameInput"
+        bindconfirm="onConfirmAdd"
+        maxlength="12"
+        focus="{{true}}"
+      />
+      <view class="modal__actions">
+        <text class="btn btn--sm" bindtap="onHideAdd">取消</text>
+        <text class="btn btn--primary btn--sm" bindtap="onConfirmAdd">创建</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,391 @@
+/* 本周概览 — v1.0.2 */
+.page {
+  min-height: 100vh;
+  background: var(--color-paper);
+}
+
+.page__body {
+  padding-top: var(--spacing-sm);
+}
+
+/* ========================================
+   周导航
+   ======================================== */
+.week-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  gap: var(--spacing-md);
+}
+
+.week-nav__arrow {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  color: var(--color-primary);
+  border-radius: 50%;
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.week-nav__arrow:active {
+  background: var(--color-divider);
+}
+
+.week-nav__info {
+  text-align: center;
+  flex: 1;
+}
+
+.week-nav__title {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  display: block;
+}
+
+.week-nav__range {
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+}
+
+.week-nav__icon {
+  font-size: 40rpx;
+  padding: 8rpx;
+}
+
+/* ========================================
+   环形进度（CSS clip 方式，兼容 WeChat）
+   ======================================== */
+.progress-section {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-sm) 0 var(--spacing-md);
+}
+
+.progress-ring {
+  position: relative;
+  width: 200rpx; height: 200rpx;
+}
+
+.progress-ring__circle {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  border-radius: 50%;
+  background: #efe8dc;
+}
+
+.progress-ring__left,
+.progress-ring__right {
+  position: absolute; top: 0;
+  width: 50%; height: 100%;
+  overflow: hidden;
+}
+
+.progress-ring__left  { left: 0; }
+.progress-ring__right { right: 0; }
+
+.progress-ring__left-fill,
+.progress-ring__right-fill {
+  position: absolute; top: 0;
+  width: 200%; height: 100%;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.progress-ring__left-fill  { left: 0; transform-origin: right center; }
+.progress-ring__right-fill { right: 0; transform-origin: left center; }
+
+.progress-ring__mask {
+  position: absolute;
+  top: 16rpx; left: 16rpx;
+  width: calc(100% - 32rpx);
+  height: calc(100% - 32rpx);
+  border-radius: 50%;
+  background: var(--color-paper);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.progress-ring__text {
+  text-align: center;
+}
+
+.progress-ring__percent {
+  font-size: 44rpx; font-weight: 700;
+  color: var(--color-primary); display: block;
+}
+
+.progress-ring__label {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+}
+
+/* ========================================
+   卡片
+   ======================================== */
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-md);
+  margin: var(--spacing-sm) var(--spacing-md);
+  border: 1rpx solid var(--color-border);
+}
+
+.card__title {
+  font-size: var(--font-base);
+  font-weight: 600;
+}
+
+.card__more {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+}
+
+.card__empty {
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: var(--font-sm);
+  padding: var(--spacing-md);
+  font-style: italic;
+}
+
+/* ========================================
+   7 天卡片行
+   ======================================== */
+.day-cards-row {
+  display: flex;
+  gap: 8rpx;
+}
+
+.day-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 4rpx;
+  border-radius: 12rpx;
+  background: var(--color-paper);
+  border: 1rpx solid var(--color-divider);
+  gap: 4rpx;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.day-card:active {
+  background: var(--color-paper-dark);
+}
+
+.day-card--today {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  box-shadow: 0 2rpx 8rpx rgba(var(--color-primary-rgb, 192, 120, 107), 0.2);
+}
+
+.day-card__label {
+  font-size: 20rpx;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5rpx;
+}
+
+.day-card__count {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.day-card__empty {
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+  line-height: 1.2;
+}
+
+/* 日期数字（新增） */
+.day-card__date {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-top: 2rpx;
+}
+
+/* 完成度圆点（新增） */
+.day-card__dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: var(--color-success);
+  margin-top: 2rpx;
+  opacity: 0.8;
+}
+
+/* ========================================
+   今日完成度头部
+   ======================================== */
+.completion-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 20rpx;
+  margin-bottom: 16rpx;
+  background: linear-gradient(135deg, #faf7f2 0%, #efe8dc 100%);
+  border-radius: var(--radius-sm);
+  border: 1rpx solid #e0d6c8;
+}
+
+.completion-header__label {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.completion-header__bar-wrap {
+  flex: 1;
+  height: 10rpx;
+  background: rgba(192, 152, 128, 0.12);
+  border-radius: 5rpx;
+  overflow: hidden;
+}
+
+.completion-header__bar {
+  height: 100%;
+  background: linear-gradient(90deg, #c09880 0%, #d4a892 100%);
+  border-radius: 5rpx;
+  transition: width 0.4s ease;
+}
+
+.completion-header__bar--done {
+  background: linear-gradient(90deg, #8bbf9f 0%, #a8d5ba 100%);
+}
+
+.completion-header__count {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: rgba(192, 152, 128, 0.1);
+  padding: 2rpx 12rpx;
+  border-radius: 16rpx;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.completion-header__percent {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 60rpx;
+  text-align: right;
+}
+
+/* ========================================
+   今日摘要卡片
+   ======================================== */
+.today-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.today-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 12rpx var(--spacing-sm);
+  background: var(--color-paper);
+  border-radius: var(--radius-sm);
+}
+
+.today-item:active {
+  opacity: 0.7;
+}
+
+.today-item__icon {
+  font-size: 32rpx;
+  flex-shrink: 0;
+  width: 44rpx;
+  text-align: center;
+}
+
+.today-item__content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.today-item__label {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+.today-item__value {
+  font-size: var(--font-base);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.today-item__preview {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240rpx;
+  font-style: italic;
+}
+
+.today-empty {
+  text-align: center;
+  padding: var(--spacing-md);
+  color: var(--color-text-light);
+  font-size: var(--font-sm);
+  font-style: italic;
+}
+
+/* ========================================
+   快捷入口
+   ======================================== */
+.quick-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: 0 var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.quick-action {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1rpx solid var(--color-border);
+}
+
+.quick-action:active {
+  background: var(--color-paper);
+  transform: scale(0.97);
+}
+
+.quick-action__icon {
+  font-size: 44rpx;
+}
+
+.quick-action__label {
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+  margin-top: 4rpx;
+}

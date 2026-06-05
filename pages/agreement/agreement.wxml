@@ -1,0 +1,37 @@
+<!-- 用户协议页 -->
+<view class="page">
+  <scroll-view class="page__body" scroll-y>
+    <view class="agreement-content">
+      <text class="agreement-title">手账周计划 · 用户协议</text>
+      <text class="agreement-date">生效日期：2026年6月1日</text>
+
+      <text class="agreement-h2">1. 服务说明</text>
+      <text class="agreement-text">手账周计划（以下简称"本小程序"）是一款提供个人周计划管理、习惯打卡、笔记记录等功能的效率工具。</text>
+
+      <text class="agreement-h2">2. 用户责任</text>
+      <text class="agreement-text">• 您应对通过本小程序记录的内容负责</text>
+      <text class="agreement-text">• 请勿使用本小程序存储违法违规内容</text>
+      <text class="agreement-text">• 请自行做好数据备份，开发者不对数据丢失承担责任</text>
+
+      <text class="agreement-h2">3. 服务变更</text>
+      <text class="agreement-text">• 我们保留随时修改或终止服务的权利</text>
+      <text class="agreement-text">• 重大变更将提前通知用户</text>
+
+      <text class="agreement-h2">4. 免责声明</text>
+      <text class="agreement-text">• 本小程序按"现状"提供，不提供任何明示或暗示的保证</text>
+      <text class="agreement-text">• 因不可抗力、系统维护、网络故障等原因导致的服务中断，我们不承担责任</text>
+      <text class="agreement-text">• 用户因使用本小程序产生的任何直接或间接损失，开发者不承担责任</text>
+
+      <text class="agreement-h2">5. 知识产权</text>
+      <text class="agreement-text">• 本小程序的界面设计、代码、文案等知识产权归开发者所有</text>
+      <text class="agreement-text">• 用户生成的内容归用户所有</text>
+
+      <text class="agreement-h2">6. 协议修改</text>
+      <text class="agreement-text">• 我们可能更新本协议，更新后在小程序内公示</text>
+      <text class="agreement-text">• 继续使用即视为同意修改后的协议</text>
+
+      <text class="agreement-h2">7. 法律适用</text>
+      <text class="agreement-text">本协议适用中华人民共和国法律。</text>
+    </view>
+  </scroll-view>
+</view>

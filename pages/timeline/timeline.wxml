@@ -1,0 +1,75 @@
+<!-- 时间线视图 — v1.0.2 -->
+<view class="page">
+  <!-- 顶栏统计 -->
+  <view class="tl-header">
+    <text class="tl-header__title">时间线</text>
+    <text class="tl-header__stats">{{stats.totalDays}}天 · {{stats.totalTodos}}待办 · {{stats.totalNotes}}笔记</text>
+  </view>
+
+  <scroll-view class="tl-scroll" scroll-y>
+    <view wx:if="{{timelineItems.length > 0}}" class="tl-list">
+
+      <view wx:for="{{timelineItems}}" wx:key="date" class="tl-row">
+        <!-- 左侧：时间轴 -->
+        <view class="tl-left">
+          <view class="tl-line"></view>
+          <view class="tl-dot {{item.isToday ? 'tl-dot--today' : ''}}">
+            <text wx:if="{{item.isToday}}" class="tl-dot__inner">今</text>
+          </view>
+          <view class="tl-line"></view>
+        </view>
+
+        <!-- 右侧：内容卡片 -->
+        <view class="tl-right">
+          <view class="tl-card" data-date="{{item.date}}" bindtap="onTapDate">
+            <!-- 日期行 -->
+            <view class="tl-card__header">
+              <view class="tl-card__date">
+                <text class="tl-card__date-text">{{item.dateLabel}}</text>
+                <text class="tl-card__weekday {{item.isToday ? 'tl-card__weekday--today' : ''}}">{{item.weekday}}{{item.isToday ? ' · 今天' : ''}}</text>
+              </view>
+              <text class="tl-card__arrow">›</text>
+            </view>
+
+            <!-- 待办 -->
+            <view wx:if="{{item.todos.total > 0}}" class="tl-card__row">
+              <text class="tl-card__icon">✅</text>
+              <text class="tl-card__label">待办</text>
+              <text class="tl-card__value">{{item.todos.done}}/{{item.todos.total}}</text>
+              <view class="tl-card__bar">
+                <view class="tl-card__bar-inner" style="width: {{item.todos.rate}}%;"></view>
+              </view>
+            </view>
+
+            <!-- 四象限 -->
+            <view wx:if="{{item.quadrant.total > 0}}" class="tl-card__row">
+              <text class="tl-card__icon">📊</text>
+              <text class="tl-card__label">四象限</text>
+              <text class="tl-card__value">{{item.quadrant.done}}/{{item.quadrant.total}}</text>
+            </view>
+
+            <!-- 笔记 -->
+            <view wx:if="{{item.hasNote}}" class="tl-card__row">
+              <text class="tl-card__icon">📝</text>
+              <text class="tl-card__label">笔记</text>
+              <text class="tl-card__note-preview">{{item.notePreview}}...</text>
+            </view>
+
+            <!-- 空 -->
+            <view wx:if="{{item.isEmpty}}" class="tl-card__empty">暂无记录</view>
+          </view>
+        </view>
+      </view>
+
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:else class="empty-state">
+      <text class="empty-state__icon">📭</text>
+      <text class="empty-state__text">还没有任何记录\n开始记录你的每一天吧</text>
+    </view>
+
+    <!-- 底部 -->
+    <view style="height: 80rpx;"></view>
+  </scroll-view>
+</view>

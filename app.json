@@ -1,0 +1,50 @@
+{
+  "pages": [
+    "pages/overview/overview",
+    "pages/todo/todo",
+    "pages/calendar/calendar",
+    "pages/mine/mine",
+    "pages/quadrant/quadrant",
+    "pages/timeline/timeline",
+    "pages/habit/habit",
+    "pages/habit/manage",
+    "pages/note/note",
+    "pages/login/login",
+    "pages/privacy/privacy",
+    "pages/agreement/agreement"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#faf7f2",
+    "navigationBarTitleText": "手账周计划 v1.0.3",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#faf7f2",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#9ca3af",
+    "selectedColor": "#c09880",
+    "backgroundColor": "#faf7f2",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/overview/overview",
+        "text": "概览"
+      },
+      {
+        "pagePath": "pages/todo/todo",
+        "text": "待办"
+      },
+      {
+        "pagePath": "pages/calendar/calendar",
+        "text": "日程"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

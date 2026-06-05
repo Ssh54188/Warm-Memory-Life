@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>生成小程序图标</title>
+<style>
+  body { font-family: sans-serif; text-align: center; padding: 30px; background: #f5f5f5; }
+  h2 { color: #5c4b3c; }
+  .preview { margin: 20px 0; }
+  .preview img { border-radius: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+  button {
+    padding: 14px 40px; font-size: 18px; border: none; border-radius: 12px;
+    background: #c4956a; color: white; cursor: pointer; margin: 8px;
+  }
+  button:hover { background: #a67c52; }
+  .sizes { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 20px 0; }
+  .size-box { text-align: center; }
+  .size-box img { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .size-box p { color: #888; font-size: 13px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<h2>📱 手账周计划 · 小程序图标生成器</h2>
+
+<div class="preview">
+  <img id="preview" width="288" height="288" alt="图标预览">
+</div>
+
+<div class="sizes">
+  <div class="size-box">
+    <img id="img144" width="144" height="144" alt="144x144">
+    <p>144×144（小程序）</p>
+  </div>
+  <div class="size-box">
+    <img id="img96" width="96" height="96" alt="96x96">
+    <p>96×96</p>
+  </div>
+  <div class="size-box">
+    <img id="img48" width="48" height="48" alt="48x48">
+    <p>48×48</p>
+  </div>
+</div>
+
+<button onclick="downloadPNG(144)">⬇ 下载 144×144（小程序用）</button>
+<button onclick="downloadPNG(96)">⬇ 下载 96×96</button>
+
+<script>
+const SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#faf6f0"/>
+      <stop offset="100%" stop-color="#f0ebe0"/>
+    </linearGradient>
+    <linearGradient id="book" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c4956a"/>
+      <stop offset="100%" stop-color="#a67c52"/>
+    </linearGradient>
+  </defs>
+  <rect x="40" y="40" width="944" height="944" rx="200" fill="url(#bg)" stroke="#d4b896" stroke-width="8"/>
+  <g transform="translate(280, 200)">
+    <rect x="180" y="0" width="60" height="560" rx="8" fill="#8b6b4a"/>
+    <rect x="30" y="20" width="180" height="520" rx="4" fill="#faf6f0" stroke="#d4b896" stroke-width="6"/>
+    <rect x="230" y="20" width="180" height="520" rx="4" fill="#fffdf8" stroke="#d4b896" stroke-width="6"/>
+    <line x1="60" y1="100" x2="190" y2="100" stroke="#e0d8cc" stroke-width="4"/>
+    <line x1="60" y1="180" x2="190" y2="180" stroke="#e0d8cc" stroke-width="4"/>
+    <line x1="60" y1="260" x2="190" y2="260" stroke="#e0d8cc" stroke-width="4"/>
+    <text x="80" y="155" font-family="serif" font-size="36" fill="#8b7a6b">待办 ✓</text>
+    <text x="80" y="235" font-family="serif" font-size="36" fill="#8b7a6b">习惯 ⭐</text>
+    <text x="80" y="315" font-family="serif" font-size="24" fill="#c4b8a8">温暖记录</text>
+    <line x1="260" y1="100" x2="390" y2="100" stroke="#e0d8cc" stroke-width="4"/>
+    <line x1="260" y1="180" x2="390" y2="180" stroke="#e0d8cc" stroke-width="4"/>
+    <line x1="260" y1="260" x2="390" y2="260" stroke="#e0d8cc" stroke-width="4"/>
+    <text x="270" y="155" font-family="serif" font-size="36" fill="#8b7a6b">周一</text>
+    <text x="270" y="235" font-family="serif" font-size="36" fill="#8b7a6b">周二</text>
+    <circle cx="370" cy="140" r="20" fill="#7ba587"/>
+    <path d="M362,140 L369,148 L380,132" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <circle cx="370" cy="220" r="20" fill="#7ba587"/>
+    <path d="M362,220 L369,228 L380,212" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(640, 250) rotate(22)">
+    <rect x="0" y="0" width="28" height="320" rx="14" fill="#c4956a"/>
+    <polygon points="4,320 14,440 24,320" fill="#5c4b3c"/>
+    <polygon points="8,440 14,460 20,440" fill="#a67c52"/>
+    <rect x="2" y="20" width="24" height="10" rx="4" fill="#8b6b4a"/>
+  </g>
+  <g transform="translate(180, 700) rotate(-15)">
+    <ellipse cx="0" cy="0" rx="50" ry="24" fill="#7ba587" opacity="0.5"/>
+    <line x1="0" y1="0" x2="0" y2="-30" stroke="#7ba587" stroke-width="4" opacity="0.5"/>
+  </g>
+  <g transform="translate(780, 720) rotate(20)">
+    <ellipse cx="0" cy="0" rx="40" ry="18" fill="#c4956a" opacity="0.4"/>
+    <line x1="0" y1="0" x2="0" y2="-24" stroke="#c4956a" stroke-width="3" opacity="0.4"/>
+  </g>
+  <text x="512" y="900" font-family="serif" font-size="72" fill="#c4956a" text-anchor="middle" font-weight="bold">周</text>
+</svg>`;
+
+function render(size) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  const img = new Image();
+  img.onload = function() {
+    ctx.drawImage(img, 0, 0, size, size);
+    const id = size === 144 ? 'preview' : ('img' + size);
+    document.getElementById(id).src = canvas.toDataURL('image/png');
+    // Also set img144/img96/img48
+    if (size === 144) {
+      ['img96','img48'].forEach(sid => {
+        const el = document.getElementById(sid);
+        if (el) el.src = canvas.toDataURL('image/png');
+      });
+    }
+  };
+  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(SVG)));
+}
+
+function downloadPNG(size) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  const img = new Image();
+  img.onload = function() {
+    ctx.drawImage(img, 0, 0, size, size);
+    const link = document.createElement('a');
+    link.download = 'icon_' + size + 'x' + size + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(SVG)));
+}
+
+// 初始渲染
+render(144);
+setTimeout(() => render(96), 300);
+setTimeout(() => render(48), 600);
+</script>
+</body>
+</html>

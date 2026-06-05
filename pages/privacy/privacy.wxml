@@ -1,0 +1,41 @@
+<!-- 隐私政策页 -->
+<view class="page">
+  <scroll-view class="page__body" scroll-y>
+    <view class="policy-content">
+      <text class="policy-title">手账周计划 · 隐私政策</text>
+      <text class="policy-date">更新日期：2026年6月1日</text>
+
+      <text class="policy-h2">1. 信息收集</text>
+      <text class="policy-text">手账周计划是一款本地优先的个人效率工具。我们承诺：</text>
+      <text class="policy-text">• 本小程序不收集任何个人身份信息</text>
+      <text class="policy-text">• 所有待办事项、习惯打卡、笔记等数据仅存储在您的设备本地</text>
+      <text class="policy-text">• 我们不会将您的数据上传到任何服务器</text>
+      <text class="policy-text">• 我们不会使用任何第三方分析或追踪工具</text>
+
+      <text class="policy-h2">2. 数据存储与安全</text>
+      <text class="policy-text">• 您的数据通过微信小程序本地存储（wx.setStorage）保存</text>
+      <text class="policy-text">• 数据存储在微信客户端分配的隔离空间内，其他小程序无法访问</text>
+      <text class="policy-text">• 卸载微信或删除小程序时，相关数据将被清除</text>
+      <text class="policy-text">• 建议定期使用「数据管理」中的备份功能导出数据</text>
+
+      <text class="policy-h2">3. 数据备份与迁移</text>
+      <text class="policy-text">• 我们提供 JSON 格式的数据导出/导入功能</text>
+      <text class="policy-text">• 导出的数据由您自行保管，我们无法访问</text>
+      <text class="policy-text">• 导入数据时请确保数据来源可靠</text>
+
+      <text class="policy-h2">4. 权限说明</text>
+      <text class="policy-text">本小程序仅使用以下系统权限：</text>
+      <text class="policy-text">• 剪贴板读写：用于数据备份的复制与恢复（仅在您主动操作时触发）</text>
+      <text class="policy-text">• 振动反馈：用于打卡交互的触觉反馈（可关闭）</text>
+
+      <text class="policy-h2">5. 儿童隐私</text>
+      <text class="policy-text">本小程序不针对 14 岁以下儿童设计，不会有意收集儿童的个人信息。</text>
+
+      <text class="policy-h2">6. 政策更新</text>
+      <text class="policy-text">我们可能会更新本隐私政策，更新后的政策将在小程序内公示。</text>
+
+      <text class="policy-h2">7. 联系我们</text>
+      <text class="policy-text">如对本隐私政策有任何疑问，请通过小程序内的反馈渠道联系我们。</text>
+    </view>
+  </scroll-view>
+</view>

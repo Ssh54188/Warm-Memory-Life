@@ -1,0 +1,106 @@
+<!-- 习惯打卡 — v1.0.3 -->
+<view class="page">
+  <!-- 周导航 -->
+  <view class="week-nav">
+    <view class="week-nav__arrow" bindtap="onPrevWeek">‹</view>
+    <view class="week-nav__info" bindtap="onCurrentWeek">
+      <text class="week-nav__range">{{weekRange}}</text>
+    </view>
+    <view class="week-nav__arrow" bindtap="onNextWeek">›</view>
+  </view>
+
+  <!-- 统计栏 -->
+  <view class="stats-panel">
+    <view class="stats-card">
+      <text class="stats-card__num">{{stats.todayDone}}/{{activeHabits.length}}</text>
+      <text class="stats-card__label">今日打卡</text>
+    </view>
+    <view class="stats-card stats-card--highlight">
+      <text class="stats-card__num">{{stats.rate}}%</text>
+      <text class="stats-card__label">周完成率</text>
+    </view>
+    <view class="stats-card">
+      <text class="stats-card__num">{{stats.weekDone}}</text>
+      <text class="stats-card__label">本周总计</text>
+    </view>
+  </view>
+
+  <scroll-view class="page__body" scroll-y>
+    <!-- 激活习惯打卡表 -->
+    <view wx:if="{{activeHabits.length > 0}}" class="habit-grid">
+      <view class="habit-header">
+        <text class="habit-header__name">习惯</text>
+        <text wx:for="{{dayLabels}}" wx:key="*this" class="habit-header__day">{{item}}</text>
+      </view>
+      <view wx:for="{{activeHabits}}" wx:key="name" class="habit-row">
+        <view class="habit-row__info">
+          <text class="habit-row__emoji">{{item.emoji || '⭐'}}</text>
+          <text class="habit-row__name">{{item.name}}</text>
+        </view>
+        <view
+          wx:for="{{checkMatrix[item.name]}}"
+          wx:for-index="ci"
+          wx:for-item="checked"
+          wx:key="ci"
+          class="habit-cell {{checked ? 'habit-cell--done' : ''}} {{ci === todayCol ? 'habit-cell--today' : ''}}"
+          data-habit="{{item.name}}"
+          data-date="{{weekDates[ci]}}"
+          bindtap="onToggle"
+        >
+          <text wx:if="{{checked}}">✓</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 停用习惯 -->
+    <view wx:if="{{inactiveHabits.length > 0}}" class="inactive-section">
+      <text class="section-title">已停用习惯</text>
+      <view wx:for="{{inactiveHabits}}" wx:key="name" class="inactive-item">
+        <text class="inactive-item__emoji">{{item.emoji || '⭐'}}</text>
+        <text class="inactive-item__name">{{item.name}}</text>
+        <text class="inactive-item__action" data-habit="{{item.name}}" bindtap="onToggleActive">激活</text>
+        <text class="inactive-item__action inactive-item__action--del" data-habit="{{item.name}}" bindtap="onDeleteHabit">删除</text>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{allHabits.length === 0}}" class="empty-state">
+      <text class="empty-state__icon">⭐</text>
+      <text class="empty-state__text">还没有添加习惯\n点击下方按钮开始吧</text>
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-bar">
+    <view class="btn btn--outline btn--sm" bindtap="goManage">
+      <text>习惯库管理</text>
+    </view>
+    <view class="btn btn--primary btn--sm" bindtap="onShowAdd">
+      <text>+ 添加习惯</text>
+    </view>
+  </view>
+
+  <!-- 添加弹窗 -->
+  <view wx:if="{{showAddModal}}" class="modal-mask" bindtap="onHideAdd">
+    <view class="modal" catchtap="">
+      <text class="modal__title">添加习惯</text>
+      <!-- 名称输入 -->
+      <view class="modal__input-row">
+        <text class="modal__emoji-preview">{{newHabitEmoji}}</text>
+        <input
+          class="modal__input"
+          value="{{newHabitName}}"
+          placeholder="输入习惯名称，如「每天阅读」"
+          bindinput="onNameInput"
+          bindconfirm="onConfirmAdd"
+          maxlength="12"
+          focus="{{true}}"
+        />
+      </view>
+      <view class="modal__actions">
+        <text class="btn btn--sm" bindtap="onHideAdd">取消</text>
+        <text class="btn btn--primary btn--sm" bindtap="onConfirmAdd">添加</text>
+      </view>
+    </view>
+  </view>
+</view>

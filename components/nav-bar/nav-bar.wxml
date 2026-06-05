@@ -1,0 +1,15 @@
+<!-- 星期切换导航栏 -->
+<view class="nav-bar">
+  <view class="nav-bar__week">
+    <view
+      wx:for="{{days}}"
+      wx:key="key"
+      class="nav-bar__day {{item.key === activeDay ? 'nav-bar__day--active' : ''}}"
+      data-day="{{item.key}}"
+      bindtap="onDayTap"
+    >
+      <text class="nav-bar__day-label">{{item.label}}</text>
+      <text class="nav-bar__day-date">{{item.date}}</text>
+    </view>
+  </view>
+</view>

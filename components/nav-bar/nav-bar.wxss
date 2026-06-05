@@ -1,0 +1,61 @@
+/* 星期切换导航栏 — 手账标签风格 */
+.nav-bar {
+  background: var(--color-paper);
+  padding: var(--spacing-sm) var(--spacing-sm) 0;
+  border-bottom: 2rpx solid var(--color-divider);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-bar__week {
+  display: flex;
+  gap: 4rpx;
+}
+
+.nav-bar__day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12rpx 4rpx;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.nav-bar__day:active {
+  transform: scale(0.95);
+}
+
+.nav-bar__day--active {
+  background: var(--color-primary);
+}
+
+.nav-bar__day--active .nav-bar__day-label,
+.nav-bar__day--active .nav-bar__day-date {
+  color: var(--color-white);
+}
+
+.nav-bar__day-label {
+  font-size: var(--font-sm);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.nav-bar__day-date {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+  margin-top: 2rpx;
+}
+
+/* 今日标记 — 小圆点 */
+.nav-bar__day--today:not(.nav-bar__day--active)::after {
+  content: '';
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: var(--color-primary);
+  position: absolute;
+  bottom: 4rpx;
+}

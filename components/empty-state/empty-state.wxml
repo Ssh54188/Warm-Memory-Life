@@ -1,0 +1,8 @@
+<!-- 空状态占位组件 -->
+<view class="empty-state">
+  <text class="empty-state__icon">{{icon}}</text>
+  <text class="empty-state__text">{{text}}</text>
+  <view wx:if="{{showBtn}}" class="empty-state__btn btn btn--primary btn--sm" bindtap="onAction">
+    {{btnText}}
+  </view>
+</view>

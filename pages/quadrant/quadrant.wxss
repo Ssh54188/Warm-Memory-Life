@@ -1,0 +1,260 @@
+/* 四象限 — v1.0.2 */
+.page {
+  height: 100vh;
+  background: var(--color-paper);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========================================
+   标题
+   ======================================== */
+.q-header {
+  text-align: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1rpx solid var(--color-divider);
+  flex-shrink: 0;
+}
+
+.q-header__title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+}
+
+.q-header__hint {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+  display: block;
+  margin-top: 4rpx;
+}
+
+/* ========================================
+   四象限网格
+   ======================================== */
+.q-grid {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  padding: var(--spacing-xs);
+  min-height: 0;
+}
+
+.q-cell {
+  width: 50%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  border: 1rpx solid var(--color-divider);
+  box-sizing: border-box;
+  background: var(--color-white);
+  transition: background 0.15s;
+  overflow: hidden;
+}
+
+.q-cell--drop {
+  background: rgba(192, 152, 128, 0.08);
+}
+
+/* 象限标题 */
+.q-cell__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6rpx var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.q-cell__label {
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.q-cell__count {
+  font-size: 18rpx;
+  color: var(--color-text-light);
+}
+
+/* 输入行 */
+.q-cell__input-row {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 4rpx var(--spacing-xs);
+  flex-shrink: 0;
+}
+
+.q-cell__input {
+  flex: 1;
+  height: 48rpx;
+  padding: 0 8rpx;
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+  font-size: 20rpx;
+}
+
+.q-cell__add {
+  width: 40rpx;
+  height: 40rpx;
+  font-size: 24rpx;
+  padding: 0;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* 任务列表 */
+.q-cell__tasks {
+  flex: 1;
+  padding: 2rpx var(--spacing-xs);
+  overflow-y: auto;
+}
+
+.q-cell__empty {
+  text-align: center;
+  font-size: 20rpx;
+  color: var(--color-text-light);
+  padding: var(--spacing-sm);
+  font-style: italic;
+}
+
+/* 任务项 */
+.q-task {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 6rpx 8rpx;
+  margin-bottom: 4rpx;
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+  transition: all 0.15s;
+}
+
+.q-task--done {
+  opacity: 0.5;
+}
+
+.q-task--done .q-task__text {
+  text-decoration: line-through;
+}
+
+.q-task--editing {
+  background: rgba(192, 152, 128, 0.12);
+}
+
+.q-task--dragging {
+  opacity: 0.4;
+  transform: scale(0.95);
+}
+
+.q-task__check {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: var(--radius-sm);
+  border: 2rpx solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18rpx;
+  flex-shrink: 0;
+}
+
+.q-task__check--done {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.q-task__text-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.q-task__text {
+  font-size: 22rpx;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.q-task__edit-input {
+  flex: 1;
+  height: 40rpx;
+  padding: 0 6rpx;
+  border-radius: var(--radius-sm);
+  border: 2rpx solid var(--color-primary);
+  font-size: 22rpx;
+}
+
+.q-task__delete {
+  width: 32rpx;
+  height: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: var(--color-text-light);
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.q-task__delete:active {
+  opacity: 1;
+  color: var(--color-danger);
+}
+
+/* ========================================
+   底部统计
+   ======================================== */
+.q-stats {
+  display: flex;
+  padding: var(--spacing-sm) var(--spacing-md);
+  padding-bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom));
+  background: var(--color-white);
+  border-top: 1rpx solid var(--color-divider);
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.q-stats__item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.q-stats__dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.q-stats__label {
+  font-size: 18rpx;
+  color: var(--color-text-secondary);
+}
+
+.q-stats__num {
+  font-size: 18rpx;
+  color: var(--color-text-light);
+  margin-left: auto;
+}
+
+/* ========================================
+   拖拽预览
+   ======================================== */
+.drag-preview {
+  position: fixed;
+  z-index: 1000;
+  padding: 16rpx 24rpx;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}

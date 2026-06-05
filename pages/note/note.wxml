@@ -1,0 +1,101 @@
+<!-- 记事本 — v1.0.2 -->
+<view class="page">
+  <!-- 日期导航 -->
+  <view class="note-nav">
+    <view class="note-nav__arrow" bindtap="onPrevDay">‹</view>
+    <view class="note-nav__info" bindtap="onToday">
+      <text class="note-nav__date">{{activeDateLabel}}</text>
+    </view>
+    <view class="note-nav__arrow" bindtap="onNextDay">›</view>
+    <view class="note-nav__history" bindtap="onToggleHistory">☰</view>
+  </view>
+
+  <!-- 心情条 -->
+  <scroll-view class="mood-bar" scroll-x>
+    <view class="mood-list">
+      <text
+        wx:for="{{moods}}"
+        wx:key="emoji"
+        class="mood-item"
+        data-emoji="{{item.emoji}}"
+        data-label="{{item.label}}"
+        bindtap="onInsertMood"
+      >{{item.emoji}}</text>
+    </view>
+  </scroll-view>
+
+  <!-- 横线纸张 -->
+  <scroll-view class="page__body" scroll-y>
+    <view class="paper">
+      <textarea
+        class="paper__textarea"
+        value="{{content}}"
+        placeholder="记录今天的美好..."
+        placeholder-style="color: #c4b8a8; font-style: italic; font-size: 28rpx;"
+        bindinput="onInput"
+        auto-height="{{false}}"
+        show-confirm-bar="{{false}}"
+        adjust-position="{{true}}"
+        cursor-spacing="120"
+        maxlength="5000"
+      />
+    </view>
+  </scroll-view>
+
+  <!-- 底部栏 -->
+  <view class="bottom-bar">
+    <view class="bottom-bar__stats">
+      <text>{{chars}}字</text>
+      <text class="bottom-bar__sep">·</text>
+      <text>{{lines}}行</text>
+      <text wx:if="{{!saved}}" class="bottom-bar__unsaved">●</text>
+    </view>
+    <view class="bottom-bar__actions">
+      <text class="bottom-btn" bindtap="onShowTemplates">📋</text>
+      <text class="bottom-btn" bindtap="onExport">📤</text>
+    </view>
+  </view>
+
+  <!-- 模板弹窗 -->
+  <view wx:if="{{showTemplates}}" class="modal-mask" bindtap="onHideTemplates">
+    <view class="modal" catchtap="">
+      <text class="modal__title">选择笔记模板</text>
+      <view class="template-list">
+        <view
+          wx:for="{{templates}}"
+          wx:key="name"
+          class="template-item"
+          bindtap="onInsertTemplate"
+          data-template="{{item.content}}"
+        >
+          <text class="template-item__icon">{{item.icon}}</text>
+          <text class="template-item__name">{{item.name}}</text>
+        </view>
+      </view>
+      <view class="modal__actions">
+        <text class="btn btn--sm" bindtap="onHideTemplates">关闭</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史侧边栏 -->
+  <view wx:if="{{showHistory}}" class="history-mask" bindtap="onToggleHistory">
+    <view class="history-panel" catchtap="">
+      <text class="history-panel__title">历史笔记</text>
+      <scroll-view class="history-panel__list" scroll-y>
+        <view
+          wx:for="{{historyDates}}"
+          wx:key="*this"
+          class="history-item {{activeDate === item ? 'history-item--active' : ''}}"
+          data-date="{{item}}"
+          bindtap="onSelectHistory"
+        >
+          <text>{{item}}</text>
+        </view>
+        <view wx:if="{{historyDates.length === 0}}" class="history-panel__empty">
+          还没有笔记记录
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>
