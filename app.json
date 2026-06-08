@@ -4,6 +4,7 @@
     "pages/todo/todo",
     "pages/calendar/calendar",
     "pages/mine/mine",
+    "pages/profile/profile",
     "pages/quadrant/quadrant",
     "pages/timeline/timeline",
     "pages/habit/habit",
@@ -15,7 +16,7 @@
   ],
   "window": {
     "navigationBarBackgroundColor": "#faf7f2",
-    "navigationBarTitleText": "手账周计划 v1.0.3",
+    "navigationBarTitleText": "暖记生活 v1.0.3",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#faf7f2",
     "backgroundTextStyle": "light"

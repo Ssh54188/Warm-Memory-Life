@@ -4,7 +4,8 @@
  */
 const {
   toggleHabitCheck, loadAllData, fmtDate, WEEKDAY_LABELS,
-  exportJSON, importJSON, clearAllData, initDefaultData
+  exportJSON, importJSON, clearAllData, initDefaultData,
+  getQuadrantsByDate, QUADRANT_KEYS, QUADRANT_LABELS, QUADRANT_COLORS
 } = require('../../utils/data')
 const storage = require('../../utils/storage')
 const app = getApp()
@@ -31,6 +32,10 @@ Page({
 
     // 7 天概览
     dayCards: [],
+
+    // 问候语 & 四象限卡片
+    greeting: '',
+    quadrantCards: [],
 
     dayLabels: ['一', '二', '三', '四', '五', '六', '日']
   },
@@ -129,10 +134,69 @@ Page({
     const todayAll = todayStats.todoTotal + todayStats.habitTotal
     const todayCompletion = todayAll > 0 ? Math.round((todayDone / todayAll) * 100) : 0
 
+    // ====== 问候语（随机 + 按时间段） ======
+    const hour = new Date().getHours()
+    const greetings = {
+      morning: [
+        '早上好，今天也要好好照顾自己呀～',
+        '新的一天开始啦，元气满满！',
+        '早安，今天也要加油哦～',
+        '早上好，记得吃早餐呀～'
+      ],
+      noon: [
+        '中午好，别忘了休息一下呀～',
+        '午安，记得吃午饭哦～',
+        '中午好，放松一下眼睛吧～',
+        '午休时间到，小憩一会儿吧～'
+      ],
+      afternoon: [
+        '下午好，继续加油呀～',
+        '下午好，来杯茶提提神吧～',
+        '下午好，保持专注哦～',
+        '下午好，离下班又近了一步～'
+      ],
+      evening: [
+        '晚上好，今天辛苦啦～',
+        '晚上好，好好休息一下吧～',
+        '晚上好，今天过得怎么样？',
+        '晚上好，准备放松休息啦～'
+      ]
+    }
+    
+    let timeKey = 'evening'
+    if (hour >= 6 && hour < 12) timeKey = 'morning'
+    else if (hour >= 12 && hour < 14) timeKey = 'noon'
+    else if (hour >= 14 && hour < 18) timeKey = 'afternoon'
+    
+    const timeGreetings = greetings[timeKey]
+    const greeting = timeGreetings[Math.floor(Math.random() * timeGreetings.length)]
+
+    // ====== 四象限卡片 ======
+    const quadrantData = getQuadrantsByDate(todayStr)
+    const quadrantCardConfig = [
+      { key: 'urgent-important', icon: '🔔', bgColor: '#fce4ec', labelColor: '#d4756b' },
+      { key: 'not-urgent-important', icon: '⭐', bgColor: '#e8f5e9', labelColor: '#5a9e6f' },
+      { key: 'urgent-not-important', icon: '📬', bgColor: '#e3f2fd', labelColor: '#5c8db5' },
+      { key: 'not-urgent-not-important', icon: '🌿', bgColor: '#f3e5f5', labelColor: '#8e6d9e' }
+    ]
+    const quadrantCards = quadrantCardConfig.map(cfg => {
+      const tasks = quadrantData[cfg.key] || []
+      return {
+        key: cfg.key,
+        label: QUADRANT_LABELS[cfg.key],
+        icon: cfg.icon,
+        count: tasks.length,
+        bgColor: cfg.bgColor,
+        labelColor: cfg.labelColor,
+        previews: tasks.slice(0, 2).map(t => t.text).join('、')
+      }
+    })
+
     this.setData({
       weekOffset, weekStart, weekRange, weekNumber,
       year: monday.getFullYear(), month: monthNum,
-      weekProgress, dayCards, todayStats, todayCompletion
+      weekProgress, dayCards, todayStats, todayCompletion,
+      greeting, quadrantCards
     })
   },
 

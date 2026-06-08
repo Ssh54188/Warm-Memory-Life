@@ -1,9 +1,16 @@
 /**
- * 登录页 — v1.0.2
- * 支持：微信一键登录 / 手机号登录 / 邮箱登录 / 跳过登录
+ * 登录页 — v2.0 真正的微信登录
+ * 支持：微信一键登录（获取真实头像+昵称） / 手机号登录 / 邮箱登录 / 跳过登录
+ * 核心能力：
+ *   - 使用 <button open-type="chooseAvatar"> 获取用户头像
+ *   - 使用 <input type="nickname"> 获取微信昵称
+ *   - 支持登录前修改头像和昵称
+ *   - 头像和昵称持久化存储，同步到"我的"页面
  */
 const storage = require('../../utils/storage')
 const app = getApp()
+
+// 默认占位头像（空字符串，UI 层用 placeholder 显示）
 
 Page({
   data: {
@@ -14,20 +21,27 @@ Page({
       { key: 'email', label: '邮箱' }
     ],
 
+    // ====== 微信登录 - 用户信息（核心改动）======
+    avatarUrl: '',             // 用户选择的头像 URL（临时路径或本地路径）
+    nickName: '',              // 用户昵称（来自微信昵称输入框或手动修改）
+    hasChosenAvatar: false,    // 是否已选择头像
+    canChooseAvatar: true,     // 是否可以选头像（微信基础库 2.21.2+）
+
     // 邮箱登录
     email: '',
     emailPwd: '',
 
     // 状态
     loading: false,
-    canGetPhone: false,
     showSkip: true,
-    alreadyLoggedIn: false,   // 是否已登录（从"我的"页导航过来）
-    currentUser: null
+    alreadyLoggedIn: false,    // 是否已登录（从"我的"页导航过来）
+    currentUser: null,
+    editingName: false,        // 是否正在编辑昵称
+    nicknameInputFocus: false  // 控制昵称输入框自动聚焦
   },
 
   onLoad(options) {
-    // 仅在首次冷启动时自动跳过登录页；主动导航过来时（如从"我的"页）始终展示
+    // 仅在首次冷启动时自动跳过登录页；主动导航过来时始终展示
     if (!options || !options.from) {
       if (storage.get('token', '')) {
         setTimeout(() => wx.reLaunch({ url: '/pages/overview/overview' }), 30)
@@ -40,9 +54,35 @@ Page({
       // 从其他页面导航过来，检查是否已登录
       const userInfo = storage.get('weekly-planner-user', null)
       if (userInfo) {
-        this.setData({ alreadyLoggedIn: true, currentUser: userInfo, showSkip: false })
+        this.setData({
+          alreadyLoggedIn: true,
+          currentUser: userInfo,
+          showSkip: false,
+          avatarUrl: userInfo.avatarUrl || '',
+          nickName: userInfo.nickName || '',
+          hasChosenAvatar: !!userInfo.avatarUrl
+        })
       }
     }
+  },
+
+  onShow() {
+    // 每次显示时刷新用户信息
+    const userInfo = storage.get('weekly-planner-user', null)
+    if (userInfo && !this.data.alreadyLoggedIn) {
+      this.setData({
+        avatarUrl: userInfo.avatarUrl || '',
+        nickName: userInfo.nickName || '',
+        hasChosenAvatar: !!userInfo.avatarUrl
+      })
+    }
+  },
+
+  /**
+   * 用户点击昵称区域 → 触发隐藏的 nickname input 获取微信昵称
+   */
+  onTapNicknameArea() {
+    this.setData({ nicknameInputFocus: true })
   },
 
   // ====================================================
@@ -55,36 +95,133 @@ Page({
   },
 
   // ====================================================
-  //  微信一键登录（v1.0.2 不再使用已废弃的 getUserProfile）
+  //  微信登录 — 头像选择（核心功能）
+  // ====================================================
+
+  /**
+   * 选择头像回调
+   * 通过 <button open-type="chooseAvatar"> 触发
+   * @param {Object} e - 事件对象，e.detail.avatarUrl 为临时文件路径
+   */
+  onChooseAvatar(e) {
+    const { avatarUrl } = e.detail
+    if (!avatarUrl) {
+      wx.showToast({ title: '选择头像失败', icon: 'none' })
+      return
+    }
+
+    // 将临时头像保存到本地永久路径（避免临时文件被清理）
+    this._saveAvatarLocally(avatarUrl).then((savedPath) => {
+      this.setData({
+        avatarUrl: savedPath,
+        hasChosenAvatar: true
+      })
+    }).catch(() => {
+      // 保存失败时直接使用临时路径（小程序内短期可用）
+      this.setData({
+        avatarUrl: avatarUrl,
+        hasChosenAvatar: true
+      })
+    })
+  },
+
+  /**
+   * 将头像临时文件保存到用户本地文件系统（永久存储）
+   * @param {string} tempPath - 临时文件路径
+   * @returns {Promise<string>} 永久文件路径
+   */
+  _saveAvatarLocally(tempPath) {
+    return new Promise((resolve, reject) => {
+      // 生成唯一文件名
+      const fileName = `avatar_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.png`
+      const fs = wx.getFileSystemManager()
+
+      // 确保目录存在（使用 USER_DATA_PATH）
+      const savePath = `${wx.env.USER_DATA_PATH}/${fileName}`
+
+      fs.saveFile({
+        tempFilePath: tempPath,
+        filePath: savePath,
+        success: () => resolve(savePath),
+        fail: (err) => {
+          console.warn('[Login] 保存头像失败，使用临时路径', err)
+          reject(err)
+        }
+      })
+    })
+  },
+
+  // ====================================================
+  //  微信登录 — 昵称输入（核心功能）
+  // ====================================================
+
+  /**
+   * 昵称输入回调
+   * 通过 <input type="nickname"> 或普通 input 触发
+   * 微信会自动填充用户的微信昵称作为 placeholder/初始值
+   */
+  onNicknameInput(e) {
+    this.setData({ nickName: e.detail.value.trim() })
+  },
+
+  /**
+   * 昵称输入框聚焦时切换到编辑模式
+   */
+  onNicknameFocus() {
+    this.setData({ editingName: true })
+  },
+
+  /**
+   * 昵称输入框失焦时退出编辑模式
+   */
+  onNicknameBlur() {
+    this.setData({ editingName: false })
+  },
+
+  // ====================================================
+  //  微信一键登录（v2.0 真正的登录流程）
   // ====================================================
 
   onWechatLogin() {
+    const { avatarUrl, nickName, hasChosenAvatar } = this.data
+
+    // 直接登录，不设"微信用户"这种无意义兜底，也不弹头像确认
+    this._doWechatLogin(hasChosenAvatar ? avatarUrl : '')
+  },
+
+  /** 执行微信登录的核心逻辑 */
+  _doWechatLogin(avatarUrl) {
     this.setData({ loading: true })
 
-    // 直接使用 wx.login 获取 code，不再依赖已废弃的 getUserProfile
     wx.login({
       success: (loginRes) => {
         if (loginRes.code) {
           const mockToken = `token_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`
-          // code 可通过后端换取 openid，当前使用模拟用户信息
-          const userInfo = { nickName: '微信用户', loginMethod: 'wechat' }
+          // 构建完整的用户信息对象（包含真实的头像和昵称）
+          const userInfo = {
+            nickName: this.data.nickName.trim(),
+            avatarUrl: avatarUrl,
+            loginMethod: 'wechat'
+          }
           this._onLoginSuccess(mockToken, userInfo)
         } else {
-          // code 为空时直接用模拟登录
           this._onMockLogin()
         }
       },
       fail: () => {
-        // wx.login 失败时降级为模拟登录
         this._onMockLogin()
       }
     })
   },
 
-  /** 模拟登录（wx.login 失败时的降级方案） */
+  /** 模拟登录降级方案 */
   _onMockLogin() {
     const mockToken = `token_guest_${Date.now()}`
-    const userInfo = { nickName: '访客用户', loginMethod: 'guest' }
+    const userInfo = {
+      nickName: this.data.nickName.trim() || '访客用户',
+      avatarUrl: this.data.avatarUrl || '',
+      loginMethod: 'guest'
+    }
     this._onLoginSuccess(mockToken, userInfo)
   },
 
@@ -102,9 +239,13 @@ Page({
     this.setData({ loading: true })
 
     // TODO: 发送加密数据到后端解密
-    // 当前本地模拟
     const mockToken = `token_phone_${Date.now()}`
-    const userInfo = { phone: '已绑定手机号' }
+    const userInfo = {
+      phone: '已绑定手机号',
+      avatarUrl: this.data.avatarUrl || '',
+      nickName: this.data.nickName.trim() || '手机用户',
+      loginMethod: 'phone'
+    }
     this._onLoginSuccess(mockToken, userInfo)
   },
 
@@ -137,10 +278,13 @@ Page({
 
     this.setData({ loading: true })
 
-    // TODO: 发送到后端校验
-    // 当前本地模拟
     const mockToken = `token_email_${Date.now()}`
-    const userInfo = { email: email.trim() }
+    const userInfo = {
+      email: email.trim(),
+      avatarUrl: this.data.avatarUrl || '',
+      nickName: this.data.nickName.trim() || email.split('@')[0],
+      loginMethod: 'email'
+    }
     this._onLoginSuccess(mockToken, userInfo)
   },
 
@@ -156,12 +300,11 @@ Page({
 
     this.setData({ loading: false })
     wx.showToast({ title: '登录成功', icon: 'success', duration: 800 })
-    // 直接跳转，reLaunch 会关闭登录页
     setTimeout(() => { this._goHome() }, 800)
   },
 
   // ====================================================
-  //  退出登录（在登录页中切换账号）
+  //  退出登录
   // ====================================================
 
   onLogout() {
@@ -175,7 +318,14 @@ Page({
           storage.remove('weekly-planner-user')
           app.globalData.isLoggedIn = false
           app.globalData.userInfo = null
-          this.setData({ alreadyLoggedIn: false, currentUser: null, showSkip: true })
+          this.setData({
+            alreadyLoggedIn: false,
+            currentUser: null,
+            showSkip: true,
+            avatarUrl: '',
+            nickName: '',
+            hasChosenAvatar: false
+          })
           wx.showToast({ title: '已退出', icon: 'success' })
         }
       }

@@ -2,11 +2,11 @@
 <view class="page">
   <scroll-view class="page__body" scroll-y>
     <view class="policy-content">
-      <text class="policy-title">手账周计划 · 隐私政策</text>
+      <text class="policy-title">暖记生活 · 隐私政策</text>
       <text class="policy-date">更新日期：2026年6月1日</text>
 
       <text class="policy-h2">1. 信息收集</text>
-      <text class="policy-text">手账周计划是一款本地优先的个人效率工具。我们承诺：</text>
+      <text class="policy-text">暖记生活是一款本地优先的个人效率工具。我们承诺：</text>
       <text class="policy-text">• 本小程序不收集任何个人身份信息</text>
       <text class="policy-text">• 所有待办事项、习惯打卡、笔记等数据仅存储在您的设备本地</text>
       <text class="policy-text">• 我们不会将您的数据上传到任何服务器</text>

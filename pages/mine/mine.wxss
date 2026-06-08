@@ -1,7 +1,7 @@
-/* 个人中心 — v1.0.2 */
+/* 个人中心 — v2.1 暖色调优化 */
 .page {
   min-height: 100vh;
-  background: var(--color-paper);
+  background: linear-gradient(180deg, #fdf8f0 0%, #f5ede0 30%, #f0e6d8 100%);
 }
 
 .page__body {
@@ -12,55 +12,66 @@
    用户卡片
    ======================================== */
 .user-card {
-  background: var(--color-white);
+  background: linear-gradient(135deg, #fffaf5 0%, #fff5ec 100%);
   margin: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  padding: var(--spacing-lg) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4rpx 24rpx rgba(160, 120, 88, 0.08);
+  padding: 36rpx var(--spacing-md);
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 28rpx;
 }
 
+/* ---- 头像 ---- */
 .user-avatar {
-  width: 96rpx;
-  height: 96rpx;
+  width: 160rpx;
+  height: 160rpx;
   border-radius: 50%;
+  display: block;
+  border: 3rpx solid #e8d5c0;
+  box-shadow: 0 4rpx 16rpx rgba(139, 94, 60, 0.1);
   flex-shrink: 0;
 }
 
 .user-avatar--placeholder {
-  background: var(--color-primary-light);
+  background: linear-gradient(135deg, #f0e6d8 0%, #e8d8c0 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48rpx;
+  font-size: 64rpx;
+  border: 3rpx dashed #c8b89a;
 }
 
+/* ---- 用户详情 ---- */
 .user-detail {
   flex: 1;
+  min-width: 0;
 }
 
 .user-name {
-  font-size: var(--font-lg);
-  font-weight: 600;
+  font-size: var(--font-xl);
+  font-weight: 700;
   color: var(--color-text);
   display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-sub {
-  font-size: var(--font-xs);
+  font-size: var(--font-sm);
   color: var(--color-text-light);
   display: block;
-  margin-top: 4rpx;
+  margin-top: 6rpx;
 }
 
 .user-arrow {
-  font-size: var(--font-lg);
-  color: var(--color-text-light);
+  font-size: 32rpx;
+  color: #d0c8bc;
+  flex-shrink: 0;
 }
 
 /* ========================================
@@ -69,16 +80,16 @@
 .menu-section {
   background: var(--color-white);
   margin: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2rpx 12rpx rgba(160, 120, 88, 0.04);
   overflow: hidden;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
+  gap: 20rpx;
+  padding: 28rpx var(--spacing-md);
   border-bottom: 1rpx solid var(--color-divider);
 }
 
@@ -87,27 +98,47 @@
 }
 
 .menu-item:active {
-  background: var(--color-paper);
+  background: linear-gradient(135deg, #fdf8f0 0%, #faf5ec 100%);
 }
 
 .menu-item__icon {
-  font-size: 36rpx;
+  font-size: 40rpx;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14rpx;
+  flex-shrink: 0;
 }
+
+.menu-item__icon--habit { background: #fff0ee; }
+.menu-item__icon--note { background: #f0eeff; }
+.menu-item__icon--sync { background: #eef4ff; }
+.menu-item__icon--privacy { background: #fff8ee; }
+.menu-item__icon--agreement { background: #fff5ee; }
 
 .menu-item__label {
   flex: 1;
   font-size: var(--font-base);
   color: var(--color-text);
+  font-weight: 500;
 }
 
 .menu-item__arrow {
-  font-size: var(--font-lg);
-  color: var(--color-text-light);
+  font-size: 36rpx;
+  color: #d0c8bc;
+  flex-shrink: 0;
 }
 
 .menu-item__hint {
-  font-size: var(--font-xs);
-  color: var(--color-text-light);
+  font-size: 22rpx;
+  color: var(--color-primary);
+  background: rgba(192, 152, 128, 0.08);
+  padding: 6rpx 16rpx;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  margin-right: -4rpx;
 }
 
 /* ========================================
@@ -115,20 +146,102 @@
    ======================================== */
 .storage-info {
   text-align: center;
-  padding: var(--spacing-md);
+  padding: 20rpx var(--spacing-md);
   font-size: var(--font-xs);
   color: var(--color-text-light);
+  margin-top: var(--spacing-sm);
 }
 
 .logout-section {
   display: flex;
   justify-content: center;
   padding: var(--spacing-md);
+  margin-top: var(--spacing-sm);
 }
 
 .footer {
   text-align: center;
-  padding: var(--spacing-xl) 0 calc(var(--spacing-xl) + env(safe-area-inset-bottom));
+  padding: var(--spacing-lg) 0 calc(var(--spacing-xl) + env(safe-area-inset-bottom));
   font-size: var(--font-xs);
-  color: var(--color-text-light);
+  color: #c8b8a0;
+}
+
+.footer text {
+  letter-spacing: 2rpx;
+}
+
+/* ========================================
+   昵称编辑弹窗（核心新增）
+   ======================================== */
+.nickname-modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nickname-modal {
+  width: 600rpx;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.15);
+}
+
+.nickname-modal__title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+  display: block;
+  margin-bottom: var(--spacing-lg);
+}
+
+.nickname-modal__input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 var(--spacing-md);
+  border-radius: var(--radius-md);
+  background: var(--color-paper);
+  border: 2rpx solid var(--color-border);
+  font-size: var(--font-base);
+  box-sizing: border-box;
+  margin-bottom: var(--spacing-lg);
+}
+
+.nickname-modal__input:focus {
+  border-color: var(--color-primary);
+}
+
+.nickname-modal__actions {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.nickname-modal__btn {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-weight: 500;
+}
+
+.nickname-modal__btn--cancel {
+  background: var(--color-paper);
+  color: var(--color-text-secondary);
+  border: 2rpx solid var(--color-border);
+}
+
+.nickname-modal__btn--confirm {
+  background: var(--color-primary);
+  color: #fff;
 }

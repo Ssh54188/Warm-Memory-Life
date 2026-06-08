@@ -2,11 +2,11 @@
 <view class="page">
   <scroll-view class="page__body" scroll-y>
     <view class="agreement-content">
-      <text class="agreement-title">手账周计划 · 用户协议</text>
+      <text class="agreement-title">暖记生活 · 用户协议</text>
       <text class="agreement-date">生效日期：2026年6月1日</text>
 
       <text class="agreement-h2">1. 服务说明</text>
-      <text class="agreement-text">手账周计划（以下简称"本小程序"）是一款提供个人周计划管理、习惯打卡、笔记记录等功能的效率工具。</text>
+      <text class="agreement-text">暖记生活（以下简称"本小程序"）是一款提供个人周计划管理、习惯打卡、笔记记录等功能的效率工具。</text>
 
       <text class="agreement-h2">2. 用户责任</text>
       <text class="agreement-text">• 您应对通过本小程序记录的内容负责</text>

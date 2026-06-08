@@ -193,7 +193,7 @@ Page({
       wx.showToast({ title: '没有内容可导出', icon: 'none' })
       return
     }
-    const exportText = `手账周计划 — ${activeDateLabel}\n${'─'.repeat(20)}\n\n${content}\n\n${'─'.repeat(20)}\n导出自：手账周计划小程序`
+    const exportText = `暖记生活 — ${activeDateLabel}\n${'─'.repeat(20)}\n\n${content}\n\n${'─'.repeat(20)}\n导出自：暖记生活小程序`
     wx.setClipboardData({ data: exportText, success: () => wx.showToast({ title: '已复制到剪贴板', icon: 'success' }) })
   }
 })

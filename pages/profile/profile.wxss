@@ -1,0 +1,200 @@
+/* 个人资料页 — 暖色调风格 */
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fdf8f0 0%, #f5ede0 30%, #f0e6d8 100%);
+}
+
+.page__body {
+  padding-top: var(--spacing-md);
+}
+
+/* ========================================
+   资料行
+   ======================================== */
+.profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx var(--spacing-md);
+  background: var(--color-white);
+  margin: 0 var(--spacing-md);
+  border-bottom: 1rpx solid var(--color-divider);
+  min-height: 96rpx;
+}
+
+.profile-row:first-child {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  margin-top: var(--spacing-sm);
+}
+
+.profile-row:active {
+  background: linear-gradient(135deg, #fdf8f0 0%, #faf5ec 100%);
+}
+
+.profile-row__label {
+  font-size: var(--font-base);
+  color: var(--color-text);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.profile-row__value {
+  font-size: var(--font-base);
+  color: #9c8b7a;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.profile-row__value--link {
+  color: #9c8b7a;
+}
+
+.profile-row__value--avatar {
+  gap: 12rpx;
+}
+
+.profile-row__arrow {
+  font-size: 32rpx;
+  color: #d0c8bc;
+  flex-shrink: 0;
+}
+
+/* ---- 头像 ---- */
+.profile-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  display: block;
+  border: 3rpx solid #e8d5c0;
+  box-shadow: 0 4rpx 16rpx rgba(139, 94, 60, 0.1);
+}
+
+.profile-avatar--placeholder {
+  background: linear-gradient(135deg, #f0e6d8 0%, #e8d8c0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+  border: 3rpx dashed #c8b89a;
+}
+
+/* ========================================
+   提示 & 按钮 & 底部
+   ======================================== */
+.profile-tip {
+  text-align: center;
+  padding: 32rpx var(--spacing-md);
+  font-size: var(--font-sm);
+  color: #c8b8a0;
+  margin-top: var(--spacing-md);
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  margin: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-weight: 500;
+  background: var(--color-white);
+}
+
+.profile-btn:active {
+  opacity: 0.8;
+}
+
+.profile-btn--danger {
+  margin-top: var(--spacing-lg);
+  color: #d4756b;
+  background: var(--color-white);
+  box-shadow: 0 2rpx 12rpx rgba(212, 117, 107, 0.1);
+}
+
+.profile-btn--ghost {
+  color: #b0a090;
+  background: var(--color-white);
+  box-shadow: 0 2rpx 12rpx rgba(160, 120, 88, 0.04);
+}
+
+.profile-footer {
+  height: calc(var(--spacing-xl) + env(safe-area-inset-bottom));
+}
+
+/* ========================================
+   昵称编辑弹窗
+   ======================================== */
+.nickname-modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nickname-modal {
+  width: 600rpx;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.15);
+}
+
+.nickname-modal__title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+  display: block;
+  margin-bottom: var(--spacing-lg);
+}
+
+.nickname-modal__input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 var(--spacing-md);
+  border-radius: var(--radius-md);
+  background: var(--color-paper);
+  border: 2rpx solid var(--color-border);
+  font-size: var(--font-base);
+  box-sizing: border-box;
+  margin-bottom: var(--spacing-lg);
+}
+
+.nickname-modal__input:focus {
+  border-color: var(--color-primary);
+}
+
+.nickname-modal__actions {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.nickname-modal__btn {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-weight: 500;
+}
+
+.nickname-modal__btn--cancel {
+  background: var(--color-paper);
+  color: var(--color-text-secondary);
+  border: 2rpx solid var(--color-border);
+}
+
+.nickname-modal__btn--confirm {
+  background: var(--color-primary);
+  color: #fff;
+}

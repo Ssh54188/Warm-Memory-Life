@@ -1,9 +1,9 @@
-<!-- 本周概览 — v1.0.3 瘦身版 -->
+<!-- 本周概览 — v1.0.4 "我的时间"风格 -->
 <view class="page">
   <scroll-view class="page__body" scroll-y>
 
     <!-- ==========================================
-         周导航
+         周导航（轻量版）
          ========================================== -->
     <view class="week-nav">
       <view class="week-nav__arrow" bindtap="onPrevWeek">‹</view>
@@ -16,23 +16,33 @@
     </view>
 
     <!-- ==========================================
-         环形进度（纯 CSS 圆环）
+         问候语区域
          ========================================== -->
-    <view class="progress-section">
-      <view class="progress-ring">
-        <view class="progress-ring__circle">
-          <view class="progress-ring__left">
-            <view class="progress-ring__left-fill" style="transform: rotate({{weekProgress >= 50 ? (weekProgress - 50) * 3.6 : 0}}deg);"></view>
-          </view>
-          <view class="progress-ring__right">
-            <view class="progress-ring__right-fill" style="transform: rotate({{weekProgress >= 50 ? 180 : weekProgress * 3.6}}deg);"></view>
-          </view>
-        </view>
-        <view class="progress-ring__mask">
-          <view class="progress-ring__text">
-            <text class="progress-ring__percent">{{weekProgress}}%</text>
-            <text class="progress-ring__label">本周完成度</text>
-          </view>
+    <view class="greeting-section">
+      <text class="greeting__text">{{greeting}} ❤️</text>
+      <text class="greeting__mascot">🐱</text>
+    </view>
+
+    <!-- ==========================================
+         四象限网格卡片（主体）
+         ========================================== -->
+    <view class="quadrant-card" bindtap="goQuadrant">
+      <view class="flex-between mb-sm">
+        <text class="quadrant-card__title">📊 今日四象限</text>
+        <text class="card__more">查看全部 ›</text>
+      </view>
+      <view class="quadrant-grid">
+        <view
+          wx:for="{{quadrantCards}}"
+          wx:key="key"
+          class="quadrant-cell"
+          style="background: {{item.bgColor}};"
+        >
+          <text class="quadrant-cell__icon">{{item.icon}}</text>
+          <text class="quadrant-cell__label" style="color: {{item.labelColor}};">{{item.label}}</text>
+          <text class="quadrant-cell__count" style="color: {{item.labelColor}};">{{item.count}}</text>
+          <text class="quadrant-cell__sub">项任务</text>
+          <text class="quadrant-cell__preview" wx:if="{{item.previews}}">{{item.previews}}</text>
         </view>
       </view>
     </view>

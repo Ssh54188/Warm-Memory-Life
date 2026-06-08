@@ -78,7 +78,15 @@ Page({
     // 添加弹窗
     showAddModal: false,
     newHabitName: '',
-    newHabitEmoji: '⭐'
+    newHabitEmoji: '⭐',
+
+    // 时长输入弹窗
+    showDurationModal: false,
+    modalHabitName: '',
+    modalHabitEmoji: '',
+    modalDate: '',
+    durationValue: '30',
+    durationUnit: '分钟'
   },
 
   onLoad() {
@@ -116,12 +124,17 @@ Page({
     activeHabits.forEach(h => {
       checkMatrix[h.name] = weekDates.map(d => {
         const checks = (allData._habitChecks && allData._habitChecks[d]) || {}
-        const checked = !!checks[h.name]
+        const checkData = checks[h.name]
+        const checked = !!checkData
+        let duration = 0
+        if (checked && typeof checkData === 'object' && checkData.duration) {
+          duration = checkData.duration
+        }
         if (checked) {
           weekDone++
           if (d === todayStr) todayDone++
         }
-        return checked
+        return { checked, duration }
       })
     })
 
@@ -132,9 +145,28 @@ Page({
       rate: totalPossible > 0 ? Math.round((weekDone / totalPossible) * 100) : 0
     }
 
+    // 本周时长统计
+    const durationStats = activeHabits.map(h => {
+      const row = checkMatrix[h.name] || []
+      const totalMinutes = row.reduce((sum, cell) => sum + (cell.duration || 0), 0)
+      const totalHours = Math.floor(totalMinutes / 60)
+      const remainMin = totalMinutes % 60
+      let formatted
+      if (totalHours > 0 && remainMin > 0) {
+        formatted = `${totalHours}h${remainMin}m`
+      } else if (totalHours > 0) {
+        formatted = `${totalHours}h`
+      } else {
+        formatted = `${totalMinutes}m`
+      }
+      return { name: h.name, emoji: h.emoji || '⭐', totalMinutes, formatted }
+    })
+    const maxD = Math.max(...durationStats.map(s => s.totalMinutes), 1)
+    durationStats.forEach(s => { s.percent = Math.round((s.totalMinutes / maxD) * 100) })
+
     this.setData({
       weekStart, weekRange, weekDates, activeHabits, inactiveHabits, allHabits,
-      checkMatrix, stats, todayStr, todayCol
+      checkMatrix, stats, durationStats, todayStr, todayCol
     })
   },
 
@@ -165,9 +197,53 @@ Page({
       wx.showToast({ title: '只能打卡今天哦', icon: 'none', duration: 1000 })
       return
     }
-    toggleHabitCheck(date, habit)
+
+    // 如果已打卡，直接取消
+    const ci = this.data.weekDates.indexOf(date)
+    const row = this.data.checkMatrix[habit]
+    if (row && row[ci] && row[ci].checked) {
+      toggleHabitCheck(date, habit)
+      this._loadData()
+      try { wx.vibrateShort({ type: 'light' }) } catch (e) { wx.vibrateShort() }
+      return
+    }
+
+    // 未打卡，弹出时长弹窗
+    const habitObj = this.data.activeHabits.find(h => h.name === habit)
+    this.setData({
+      showDurationModal: true,
+      modalHabitName: habit,
+      modalHabitEmoji: habitObj ? habitObj.emoji : '⭐',
+      modalDate: date,
+      durationValue: '30',
+      durationUnit: '分钟'
+    })
+  },
+
+  // ====================================================
+  //  时长弹窗
+  // ====================================================
+
+  onDurationInput(e) {
+    this.setData({ durationValue: e.detail.value })
+  },
+
+  onToggleUnit() {
+    const newUnit = this.data.durationUnit === '分钟' ? '小时' : '分钟'
+    this.setData({ durationUnit: newUnit })
+  },
+
+  onConfirmDuration() {
+    const val = parseInt(this.data.durationValue) || 0
+    const duration = this.data.durationUnit === '小时' ? val * 60 : val
+    toggleHabitCheck(this.data.modalDate, this.data.modalHabitName, duration)
+    this.setData({ showDurationModal: false })
     this._loadData()
     try { wx.vibrateShort({ type: 'light' }) } catch (e) { wx.vibrateShort() }
+  },
+
+  onCancelDuration() {
+    this.setData({ showDurationModal: false })
   },
 
   // ====================================================

@@ -40,14 +40,30 @@
         <view
           wx:for="{{checkMatrix[item.name]}}"
           wx:for-index="ci"
-          wx:for-item="checked"
+          wx:for-item="cell"
           wx:key="ci"
-          class="habit-cell {{checked ? 'habit-cell--done' : ''}} {{ci === todayCol ? 'habit-cell--today' : ''}}"
+          class="habit-cell {{cell.checked ? 'habit-cell--done' : ''}} {{ci === todayCol ? 'habit-cell--today' : ''}}"
           data-habit="{{item.name}}"
           data-date="{{weekDates[ci]}}"
           bindtap="onToggle"
         >
-          <text wx:if="{{checked}}">✓</text>
+          <text wx:if="{{cell.checked && cell.duration > 0}}" class="habit-cell__duration">{{cell.duration}}m</text>
+          <text wx:elif="{{cell.checked}}">✓</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 本周时长统计 -->
+    <view wx:if="{{durationStats.length > 0}}" class="duration-stats">
+      <text class="section-title">📊 本周时长统计</text>
+      <view wx:for="{{durationStats}}" wx:key="name" class="duration-item">
+        <view class="duration-item__header">
+          <text class="duration-item__emoji">{{item.emoji}}</text>
+          <text class="duration-item__name">{{item.name}}</text>
+          <text class="duration-item__time">{{item.formatted}}</text>
+        </view>
+        <view class="duration-item__bar-bg">
+          <view class="duration-item__bar-fg" style="width: {{item.percent}}%"></view>
         </view>
       </view>
     </view>
@@ -69,6 +85,39 @@
       <text class="empty-state__text">还没有添加习惯\n点击下方按钮开始吧</text>
     </view>
   </scroll-view>
+
+  <!-- 时长输入弹窗（美化版） -->
+  <view wx:if="{{showDurationModal}}" class="modal-mask" bindtap="onCancelDuration">
+    <view class="modal" catchtap="">
+      <view class="duration-header">
+        <text class="duration-header__emoji">{{modalHabitEmoji}}</text>
+        <text class="duration-header__title">{{modalHabitName}}</text>
+        <text class="duration-header__subtitle">记录本次时长</text>
+      </view>
+
+      <view class="duration-input-row">
+        <input
+          class="duration-input"
+          type="number"
+          value="{{durationValue}}"
+          bindinput="onDurationInput"
+          maxlength="4"
+          focus="{{true}}"
+          placeholder="0"
+        />
+        <view class="duration-unit {{durationUnit === '分钟' ? 'duration-unit--active' : ''}}" bindtap="onToggleUnit">{{durationUnit}}</view>
+      </view>
+
+      <view class="duration-hint">
+        <text>输入 0 表示仅标记完成</text>
+      </view>
+
+      <view class="modal__actions">
+        <text class="btn btn--outline btn--sm" bindtap="onCancelDuration">取消</text>
+        <text class="btn btn--primary btn--sm" bindtap="onConfirmDuration">完成打卡</text>
+      </view>
+    </view>
+  </view>
 
   <!-- 底部操作 -->
   <view class="bottom-bar">

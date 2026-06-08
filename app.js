@@ -1,5 +1,5 @@
 /**
- * 手账周计划 v1.0.3 — 小程序入口
+ * 暖记生活 v1.0.3 — 小程序入口
  * 新增：登录态管理、v1→v2 数据迁移、云端同步预留
  * v1.0.3 改动：概览页瘦身、日历格文字标签、习惯页周导航
  */
@@ -33,7 +33,7 @@ App({
       _migrateQuadrantsIfNeeded()
     }, 200)
 
-    console.log('[手账周计划 v1.0.3] 启动', {
+    console.log('[暖记生活 v1.0.3] 启动', {
       weekStart: this.globalData.weekStart,
       habits: getActiveHabits().length,
       dates: Object.keys(data).filter(k => !k.startsWith('_')).length

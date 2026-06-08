@@ -6,9 +6,9 @@ const storage = require('./storage')
 
 const STORAGE_KEY = 'weekly-planner-data'
 const DEFAULT_HABITS = [
-  { name: '运动30分钟', active: true, emoji: '🏃', createdAt: '' },
-  { name: '阅读30分钟', active: true, emoji: '📖', createdAt: '' },
-  { name: '冥想10分钟', active: true, emoji: '🧘', createdAt: '' }
+  { name: '运动', active: true, emoji: '🏃', createdAt: '' },
+  { name: '阅读', active: true, emoji: '📖', createdAt: '' },
+  { name: '冥想', active: true, emoji: '🧘', createdAt: '' }
 ]
 
 // ============================================================
@@ -260,13 +260,26 @@ function getHabitChecks(dateStr) {
   return all._habitChecks[dateStr] || {}
 }
 
-/** 切换打卡 */
-function toggleHabitCheck(dateStr, habitName) {
+/** 切换打卡（支持 duration 参数，分钟数） */
+function toggleHabitCheck(dateStr, habitName, duration) {
   const all = loadAllData()
   if (!all._habitChecks) all._habitChecks = {}
   if (!all._habitChecks[dateStr]) all._habitChecks[dateStr] = {}
 
-  all._habitChecks[dateStr][habitName] = !all._habitChecks[dateStr][habitName]
+  const current = all._habitChecks[dateStr][habitName]
+
+  // 如果已打卡，取消打卡
+  if (current) {
+    delete all._habitChecks[dateStr][habitName]
+    saveAllData(all)
+    return null
+  }
+
+  // 新打卡，存储 { checked: true, duration }
+  all._habitChecks[dateStr][habitName] = {
+    checked: true,
+    duration: duration || 0
+  }
   saveAllData(all)
   return all._habitChecks[dateStr][habitName]
 }

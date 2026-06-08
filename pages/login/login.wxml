@@ -1,15 +1,22 @@
-<!-- 登录页 — v1.0.2 -->
+<!-- 登录页 — v2.2 暖色调重设计 -->
 <view class="page">
   <!-- Logo / 品牌区 -->
   <view class="brand">
+    <view class="brand__deco">~ ✦ ~</view>
     <text class="brand__icon">📒</text>
-    <text class="brand__title">手账周计划</text>
-    <text class="brand__desc">温暖你的每一天</text>
+    <text class="brand__title">暖记生活</text>
+    <text class="brand__desc">温柔记录，每一天的闪光</text>
   </view>
 
   <!-- 已登录状态 -->
   <view wx:if="{{alreadyLoggedIn}}" class="logged-in-card">
-    <text class="logged-in__icon">✅</text>
+    <image
+      wx:if="{{currentUser.avatarUrl}}"
+      class="logged-in__avatar"
+      src="{{currentUser.avatarUrl}}"
+      mode="aspectFill"
+    />
+    <view wx:else class="logged-in__avatar logged-in__avatar--placeholder">👤</view>
     <text class="logged-in__title">已登录</text>
     <text class="logged-in__user">{{currentUser.nickName || currentUser.email || currentUser.phone || '当前账号'}}</text>
     <view class="logged-in__actions">
@@ -18,42 +25,82 @@
     <view class="login-divider"><text>切换账号</text></view>
   </view>
 
-  <!-- 登录 Tab 切换 -->
-  <view class="login-tabs">
-    <view
-      wx:for="{{tabs}}"
-      wx:key="key"
-      class="login-tab {{loginTab === item.key ? 'login-tab--active' : ''}}"
-      data-key="{{item.key}}"
-      bindtap="onSwitchTab"
-    >{{item.label}}</view>
-  </view>
-
-  <!-- 微信登录 -->
+  <!-- ====== 微信登录（主面板）====== -->
   <view wx:if="{{loginTab === 'wechat'}}" class="login-panel">
+
+    <!-- 头像选择卡片 — 横向布局 -->
+    <view class="profile-card">
+      <view class="profile-card__left">
+        <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+          <image
+            wx:if="{{hasChosenAvatar && avatarUrl}}"
+            class="avatar-btn__img"
+            src="{{avatarUrl}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="avatar-btn__empty">
+            <text class="avatar-btn__icon">📷</text>
+          </view>
+          <view class="avatar-btn__badge">
+            <text>📷</text>
+          </view>
+        </button>
+      </view>
+
+      <view class="profile-card__right">
+        <!-- 隐藏昵称输入框 -->
+        <input
+          class="nickname-input nickname-input--hidden"
+          type="nickname"
+          placeholder=""
+          value="{{nickName}}"
+          bindinput="onNicknameInput"
+          bindfocus="onNicknameFocus"
+          bindblur="onNicknameBlur"
+          maxlength="20"
+          focus="{{nicknameInputFocus}}"
+        />
+
+        <view wx:if="{{nickName}}" class="nickname-display" bindtap="onTapNicknameArea">
+          <text class="nickname-display__text">{{nickName}}</text>
+          <text class="nickname-display__hint">微信昵称 ✓</text>
+        </view>
+        <view wx:else class="nickname-display nickname-display--waiting" bindtap="onTapNicknameArea">
+          <text class="nickname-display__icon">👤</text>
+          <text class="nickname-display__text">点击获取微信昵称</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 微信登录按钮 -->
     <button
-      class="login-btn login-btn--wechat"
+      class="wechat-btn"
       bindtap="onWechatLogin"
       loading="{{loading}}"
     >
-      <text class="login-btn__icon">💬</text>
       <text>微信一键登录</text>
+      <text class="wechat-btn__arrow">→</text>
     </button>
-    <text class="login-hint">点击即可快速登录，无需额外授权</text>
+    <text class="login-hint" wx:if="{{!hasChosenAvatar && !nickName}}">点击上方区域获取微信头像和昵称</text>
+    <text class="login-hint" wx:elif="{{!hasChosenAvatar}}">再点击头像完成设置即可登录</text>
+    <text class="login-hint" wx:elif="{{!nickName}}">再点击昵称区域获取微信名即可登录</text>
+    <text class="login-hint login-hint--ready" wx:else>信息已就绪，点击下方按钮登录</text>
   </view>
 
   <!-- 手机号登录 -->
   <view wx:if="{{loginTab === 'phone'}}" class="login-panel">
-    <button
-      class="login-btn login-btn--phone"
-      open-type="getPhoneNumber"
-      bindgetphonenumber="onGetPhone"
-      loading="{{loading}}"
-    >
-      <text class="login-btn__icon">📱</text>
-      <text>微信绑定手机号登录</text>
-    </button>
-    <text class="login-hint">需使用已绑定手机号的微信号</text>
+    <view class="form-group">
+      <text class="form-label">手机号</text>
+      <button
+        class="wechat-btn"
+        open-type="getPhoneNumber"
+        bindgetphonenumber="onGetPhone"
+        loading="{{loading}}"
+      >
+      <text>微信绑定手机号</text>
+      </button>
+      <text class="login-hint">需使用已绑定手机号的微信号</text>
+    </view>
   </view>
 
   <!-- 邮箱登录 -->
@@ -79,14 +126,28 @@
         bindconfirm="onEmailLogin"
       />
     </view>
-    <button class="login-btn login-btn--email" bindtap="onEmailLogin" loading="{{loading}}">
+    <button class="wechat-btn wechat-btn--dark" bindtap="onEmailLogin" loading="{{loading}}">
       <text>登录</text>
     </button>
   </view>
 
+  <!-- 其他登录方式 -->
+  <view wx:if="{{showSkip && !alreadyLoggedIn}}" class="alt-login">
+    <view class="alt-login__divider">
+      <view class="alt-login__line"></view>
+      <text class="alt-login__label" wx:if="{{loginTab === 'wechat'}}">其他登录方式</text>
+      <text class="alt-login__back" wx:else bindtap="onSwitchTab" data-key="wechat">← 返回微信登录</text>
+      <view class="alt-login__line"></view>
+    </view>
+    <view class="alt-login__links">
+      <text class="alt-login__link {{loginTab === 'phone' ? 'alt-login__link--active' : ''}}" bindtap="onSwitchTab" data-key="phone">手机号登录</text>
+      <text class="alt-login__sep">|</text>
+      <text class="alt-login__link {{loginTab === 'email' ? 'alt-login__link--active' : ''}}" bindtap="onSwitchTab" data-key="email">邮箱登录</text>
+    </view>
+  </view>
+
   <!-- 跳过登录 -->
-  <view wx:if="{{showSkip}}" class="skip-section">
+  <view wx:if="{{showSkip && !alreadyLoggedIn}}" class="skip-section">
     <text class="skip-link" bindtap="onSkip">跳过登录，先体验一下 →</text>
-    <text class="skip-hint">数据将保存在本地，登录后可云端同步</text>
   </view>
 </view>
