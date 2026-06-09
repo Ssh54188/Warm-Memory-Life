@@ -52,7 +52,7 @@ function remove(key) {
 }
 
 /**
- * 清空所有本应用数据
+ * 清空所有本应用数据（⚠ 谨慎使用：会删除所有手账数据）
  * @returns {boolean}
  */
 function clearAll() {
@@ -66,6 +66,9 @@ function clearAll() {
     return false
   }
 }
+
+// clearAll 别名（保持向后兼容）
+const clear = clearAll
 
 /**
  * 获取存储使用信息
@@ -84,4 +87,4 @@ function getInfo() {
   }
 }
 
-module.exports = { get, set, remove, clearAll, getInfo }
+module.exports = { get, set, remove, clearAll, clear, getInfo }

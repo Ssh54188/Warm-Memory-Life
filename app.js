@@ -9,35 +9,56 @@ const {
 } = require('./utils/data')
 const storage = require('./utils/storage')
 
+// 必须在 App() 注册之前初始化云环境，否则页面 onLoad 时云 API 尚未就绪
+if (wx.cloud) {
+  wx.cloud.init({
+    env: 'cloud1-d4go8n0ph6464342d'
+  })
+}
+
 App({
   globalData: {
     weekOffset: 0,            // 周偏移（0=本周）
     weekStart: '',            // 当前展示周的周一日期
     weekDates: [],            // 当前周的 7 天日期数组
     dataReady: false,
+    dataVersion: 0,           // 数据版本号（每次写入递增，用于跨页同步）
     isLoggedIn: false,
     userInfo: null
   },
 
   onLaunch() {
-    // 1. 检查登录态（异步，不阻塞）
+    // 0. 初始化云开发环境（必须在其他云 API 之前调用）
+    if (wx.cloud) {
+      wx.cloud.init({
+        env: 'cloud1-d4go8n0ph6464342d'
+      })
+    }
+
+    // 1. 检查登录态（同步读取缓存，不阻塞）
     this._checkLogin()
 
-    // 2. 初始化数据（最小同步操作）
-    const data = initDefaultData()
-    this._setWeek(0)
-
-    // 3. 延迟执行迁移（避免启动超时）
+    // 2. 初始化数据（轻量操作，但用 setTimeout 避免阻塞启动）
     setTimeout(() => {
-      migrateV1Data()
-      _migrateQuadrantsIfNeeded()
-    }, 200)
+      initDefaultData()
+      this._setWeek(0)
 
-    console.log('[暖记生活 v1.0.3] 启动', {
-      weekStart: this.globalData.weekStart,
-      habits: getActiveHabits().length,
-      dates: Object.keys(data).filter(k => !k.startsWith('_')).length
-    })
+      // 3. 延迟执行迁移（避免启动超时）
+      setTimeout(() => {
+        migrateV1Data()
+        _migrateQuadrantsIfNeeded()
+      }, 200)
+    }, 0)
+
+    // 4. 异步日志（不阻塞启动流程）
+    setTimeout(() => {
+      const data = loadAllData()
+      console.log('[暖记生活 v1.0.3] 启动', {
+        weekStart: this.globalData.weekStart,
+        habits: getActiveHabits().length,
+        dates: Object.keys(data).filter(k => !k.startsWith('_')).length
+      })
+    }, 500)
   },
 
   /** 检查登录态 */
@@ -79,5 +100,10 @@ App({
   /** 刷新全局数据 */
   refreshData() {
     this._setWeek(this.globalData.weekOffset)
+  },
+
+  /** 通知所有页面：数据已变更（递增版本号） */
+  notifyDataChanged() {
+    this.globalData.dataVersion++
   }
 })

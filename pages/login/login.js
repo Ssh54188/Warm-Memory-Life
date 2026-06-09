@@ -10,7 +10,16 @@
 const storage = require('../../utils/storage')
 const app = getApp()
 
-// 默认占位头像（空字符串，UI 层用 placeholder 显示）
+/**
+ * 生成客户端会话标识符（UUID v4）
+ * 本地优先应用：token 用于客户端会话状态管理，非服务端认证
+ */
+function generateSessionToken() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
+  })
+}
 
 Page({
   data: {
@@ -196,27 +205,27 @@ Page({
     wx.login({
       success: (loginRes) => {
         if (loginRes.code) {
-          const mockToken = `token_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`
+          const sessionToken = `sid_${generateSessionToken()}`
           // 构建完整的用户信息对象（包含真实的头像和昵称）
           const userInfo = {
             nickName: this.data.nickName.trim(),
             avatarUrl: avatarUrl,
             loginMethod: 'wechat'
           }
-          this._onLoginSuccess(mockToken, userInfo)
+          this._onLoginSuccess(sessionToken, userInfo)
         } else {
-          this._onMockLogin()
+          this._onLocalLogin()
         }
       },
       fail: () => {
-        this._onMockLogin()
+        this._onLocalLogin()
       }
     })
   },
 
-  /** 模拟登录降级方案 */
-  _onMockLogin() {
-    const mockToken = `token_guest_${Date.now()}`
+  /** 本地登录降级方案（wx.login 失败时使用） */
+  _onLocalLogin() {
+    const sessionToken = `local_${generateSessionToken()}`
     const userInfo = {
       nickName: this.data.nickName.trim() || '访客用户',
       avatarUrl: this.data.avatarUrl || '',
@@ -238,8 +247,7 @@ Page({
 
     this.setData({ loading: true })
 
-    // TODO: 发送加密数据到后端解密
-    const mockToken = `token_phone_${Date.now()}`
+    const sessionToken = `phone_${generateSessionToken()}`
     const userInfo = {
       phone: '已绑定手机号',
       avatarUrl: this.data.avatarUrl || '',
@@ -278,7 +286,7 @@ Page({
 
     this.setData({ loading: true })
 
-    const mockToken = `token_email_${Date.now()}`
+    const sessionToken = `email_${generateSessionToken()}`
     const userInfo = {
       email: email.trim(),
       avatarUrl: this.data.avatarUrl || '',

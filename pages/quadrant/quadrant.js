@@ -1,29 +1,28 @@
 /**
  * 四象限优先级管理 — v1.0.2
  * 艾森豪威尔矩阵 + 拖拽跨象限迁移 + 任务 CRUD
+ * 拖拽逻辑由 quadrant-drag-behavior 提供
  */
 const {
   QUADRANT_KEYS, QUADRANT_LABELS, QUADRANT_COLORS,
-  getQuadrants, addQuadrantTask, toggleQuadrantTask,
-  deleteQuadrantTask, editQuadrantTask, moveQuadrantTask,
-  getQuadrantStats, fmtDate, getDateData,
-  addTodo, toggleTodo, deleteTodo,
-  loadAllData, saveAllData
+  getQuadrantsByDate, addQuadrantTaskForDate,
+  toggleQuadrantTaskForDate, deleteQuadrantTaskForDate,
+  editQuadrantTaskForDate, moveQuadrantTaskForDate,
+  getQuadrantStatsByDate, fmtDate, getDateData,
+  addTodo, toggleTodo, deleteTodo, loadAllData, saveAllData,
+  WEEKDAY_LABELS
 } = require('../../utils/data')
+const dragBehavior = require('../../utils/quadrant-drag-behavior')
 
 Page({
+  behaviors: [dragBehavior],
+
   data: {
+    activeDate: '',
+    activeDateLabel: '',
     quadrants: [],
     quadrantData: {},
     quadrantInputs: {},
-
-    // 拖拽状态
-    dragging: false,
-    dragTask: null,
-    dragFromKey: '',
-    dragX: 0,
-    dragY: 0,
-    dragTargetKey: '',
 
     // 编辑状态
     editingId: '',
@@ -33,12 +32,12 @@ Page({
     stats: {}
   },
 
-  // ====================================================
-  //  生命周期
-  // ====================================================
+  onLoad(options) {
+    const dateStr = options.date || fmtDate(new Date())
+    const d = new Date(dateStr)
+    const activeDateLabel = `${d.getMonth() + 1}月${d.getDate()}日 ${WEEKDAY_LABELS[d.getDay()]}`
+    this.setData({ activeDate: dateStr, activeDateLabel })
 
-  onLoad() {
-    // 构建象限 UI 数据
     const ui = QUADRANT_KEYS.map(key => ({
       key,
       label: QUADRANT_LABELS[key],
@@ -58,14 +57,17 @@ Page({
   // ====================================================
 
   _loadData() {
-    const data = getQuadrants()
-    const stats = {}
+    const dateStr = this.data.activeDate || fmtDate(new Date())
+    const data = getQuadrantsByDate(dateStr)
+    const stats = getQuadrantStatsByDate(dateStr)
     const quadrants = this.data.quadrants.map(q => {
       const tasks = data[q.key] || []
-      stats[q.key] = tasks.length
       return { ...q, tasks }
     })
-    this.setData({ quadrantData: data, quadrants, stats })
+    const activeDate = this.data.activeDate
+    const d = new Date(activeDate)
+    const activeDateLabel = `${d.getMonth() + 1}月${d.getDate()}日 ${WEEKDAY_LABELS[d.getDay()]}`
+    this.setData({ quadrantData: data, quadrants, stats, activeDateLabel })
   },
 
   // ====================================================
@@ -74,7 +76,6 @@ Page({
 
   onInput(e) {
     const { key } = e.currentTarget.dataset
-    // 使用对象展开避免 setData 路径解析连字符键名的问题
     const quadrantInputs = { ...this.data.quadrantInputs, [key]: e.detail.value }
     this.setData({ quadrantInputs })
   },
@@ -90,8 +91,8 @@ Page({
       wx.showToast({ title: '请输入任务内容', icon: 'none', duration: 1000 })
       return
     }
-
-    const task = addQuadrantTask(key, text)
+    const dateStr = this.data.activeDate || fmtDate(new Date())
+    const task = addQuadrantTaskForDate(dateStr, key, text)
     this._syncTodo('add', key, text, task ? task.id : null)
     const quadrantInputs = { ...this.data.quadrantInputs, [key]: '' }
     this.setData({ quadrantInputs })
@@ -101,15 +102,17 @@ Page({
 
   onToggle(e) {
     const { key, id } = e.currentTarget.dataset
+    const dateStr = this.data.activeDate || fmtDate(new Date())
+    toggleQuadrantTaskForDate(dateStr, key, id)
     const quad = this.data.quadrants.find(q => q.key === key)
     const task = (quad ? quad.tasks : []).find(t => t.id === id)
-    toggleQuadrantTask(key, id)
     if (task) this._syncTodo('toggle', key, task.text, task.id)
     this._loadData()
   },
 
   onDelete(e) {
     const { key, id } = e.currentTarget.dataset
+    const dateStr = this.data.activeDate || fmtDate(new Date())
     const quad = this.data.quadrants.find(q => q.key === key)
     const task = (quad ? quad.tasks : []).find(t => t.id === id)
     wx.showModal({
@@ -118,7 +121,7 @@ Page({
       confirmColor: '#d4756b',
       success: (res) => {
         if (res.confirm) {
-          deleteQuadrantTask(key, id)
+          deleteQuadrantTaskForDate(dateStr, key, id)
           if (task) this._syncTodo('delete', key, task.text, task.id)
           this._loadData()
         }
@@ -145,12 +148,13 @@ Page({
 
   onEditConfirm(e) {
     const { key } = e.currentTarget.dataset
+    const dateStr = this.data.activeDate || fmtDate(new Date())
     const newText = this.data.editingText.trim()
     if (!newText) {
       this.setData({ editingId: '', editingText: '' })
       return
     }
-    editQuadrantTask(key, this.data.editingId, newText)
+    editQuadrantTaskForDate(dateStr, key, this.data.editingId, newText)
     this._syncTodo('edit', key, newText, this.data.editingId)
     this.setData({ editingId: '', editingText: '' })
     this._loadData()
@@ -161,89 +165,23 @@ Page({
   },
 
   // ====================================================
-  //  拖拽跨象限迁移（使用 longpress 启动，不干扰正常点击和滚动）
+  //  拖拽跨象限迁移（由 quadrant-drag-behavior 提供）
   // ====================================================
 
-  onLongPress(e) {
-    const { key, id } = e.currentTarget.dataset
-    const touch = e.touches[0]
-    this.setData({
-      dragging: true,
-      dragFromKey: key,
-      dragTask: id,
-      dragX: touch.clientX - 50,
-      dragY: touch.clientY - 25
-    })
-    try { wx.vibrateShort({ type: 'medium' }) } catch (e) { wx.vibrateShort() }
+  _dragHeaderOffset: 100,
+  _dragFooterOffset: 80,
+
+  /** 页面实现：执行象限内任务移动 */
+  _doMoveQuadrantTask(fromKey, toKey, taskId) {
+    const dateStr = this.data.activeDate || fmtDate(new Date())
+    moveQuadrantTaskForDate(dateStr, fromKey, toKey, taskId)
   },
 
-  onTouchMove(e) {
-    // 非拖拽状态直接忽略，不阻塞滚动
-    if (!this.data.dragging) return
-
-    const touch = e.touches[0]
-    this.setData({
-      dragX: touch.clientX - 50,
-      dragY: touch.clientY - 25
-    })
-    this._checkDropZone(touch.clientX, touch.clientY)
-  },
-
-  onTouchEnd() {
-    if (!this.data.dragging) return
-
-    const { dragFromKey, dragTask, dragTargetKey } = this.data
-
-    if (dragTargetKey && dragTargetKey !== dragFromKey) {
-      const quad = this.data.quadrants.find(q => q.key === dragFromKey)
-      const task = (quad ? quad.tasks : []).find(t => t.id === dragTask)
-      moveQuadrantTask(dragFromKey, dragTargetKey, dragTask)
-      if (task) this._syncTodo('move', dragTargetKey, task.text, task.id)
-      this._loadData()
-      wx.showToast({ title: '已移动', icon: 'success', duration: 800 })
-    }
-
-    this.setData({
-      dragging: false,
-      dragTask: null,
-      dragFromKey: '',
-      dragX: 0,
-      dragY: 0,
-      dragTargetKey: ''
-    })
-  },
-
-  /** 根据坐标判断落在哪个象限 */
-  _checkDropZone(clientX, clientY) {
-    // 简单两分法：将屏幕分为四区
-    const winInfo = (wx.getWindowInfo && wx.getWindowInfo()) || wx.getSystemInfoSync()
-    const w = winInfo.windowWidth
-    const h = winInfo.windowHeight
-    const headerH = 100  // 顶部标题栏高度
-    const statsH = 80    // 底部统计高度
-
-    const midX = w / 2
-    const midY = headerH + (h - headerH - statsH) / 2
-
-    let targetKey = ''
-    const x = clientX
-    const y = clientY
-
-    if (y < headerH || y > h - statsH) {
-      targetKey = ''
-    } else if (x < midX && y < midY) {
-      targetKey = 'urgent-important'       // Q1 左上
-    } else if (x >= midX && y < midY) {
-      targetKey = 'not-urgent-important'   // Q2 右上
-    } else if (x < midX && y >= midY) {
-      targetKey = 'urgent-not-important'   // Q3 左下
-    } else {
-      targetKey = 'not-urgent-not-important' // Q4 右下
-    }
-
-    if (targetKey !== this.data.dragTargetKey) {
-      this.setData({ dragTargetKey: targetKey })
-    }
+  /** 拖拽完成回调 — 同步到待办列表 */
+  _onDragComplete(fromKey, toKey, taskId, task) {
+    if (task) this._syncTodo('move', toKey, task.text, task.id)
+    this._loadData()
+    wx.showToast({ title: '已移动', icon: 'success', duration: 800 })
   },
 
   // ====================================================
@@ -251,7 +189,7 @@ Page({
   // ====================================================
 
   _syncTodo(action, quadrantKey, text, quadrantTaskId) {
-    const dateStr = fmtDate(new Date())
+    const dateStr = this.data.activeDate || fmtDate(new Date())
     if (action === 'add') {
       addTodo(dateStr, text, quadrantKey, quadrantTaskId)
       return

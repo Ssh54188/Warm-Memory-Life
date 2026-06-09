@@ -6,6 +6,7 @@
  *   - 退出登录
  */
 const storage = require('../../utils/storage')
+const { exportJSON, importJSON } = require('../../utils/data')
 const app = getApp()
 
 Page({
@@ -125,15 +126,81 @@ Page({
   },
 
   // ====================================================
-  //  同步
+  //  数据备份与恢复（本地优先，替代虚假"云端同步"）
   // ====================================================
 
+  /** 导出数据备份 —— 复制 JSON 到剪贴板 */
   onSync() {
-    if (!this.data.isLoggedIn) {
-      wx.showToast({ title: '请先登录', icon: 'none' })
-      return
+    wx.showActionSheet({
+      itemList: ['导出数据备份', '从剪贴板恢复数据'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          this._exportBackup()
+        } else {
+          this._showRestorePrompt()
+        }
+      }
+    })
+  },
+
+  /** 导出：将全量数据复制到剪贴板 */
+  _exportBackup() {
+    try {
+      const json = exportJSON()
+      wx.setClipboardData({
+        data: json,
+        success: () => {
+          wx.showModal({
+            title: '备份已复制',
+            content: '数据已复制到剪贴板，请粘贴到安全的地方保存（如微信收藏或备忘录）。',
+            showCancel: false,
+            confirmText: '知道了'
+          })
+        },
+        fail: () => {
+          wx.showToast({ title: '复制失败，请重试', icon: 'none' })
+        }
+      })
+    } catch (e) {
+      wx.showToast({ title: '导出失败', icon: 'none' })
+      console.error('[Export] 导出失败', e)
     }
-    wx.showToast({ title: '数据已同步', icon: 'success' })
+  },
+
+  /** 恢复：提示用户粘贴 */
+  _showRestorePrompt() {
+    wx.showModal({
+      title: '恢复数据',
+      content: '请先复制之前备份的 JSON 数据到剪贴板，然后点击"开始恢复"。注意：恢复将覆盖当前数据。',
+      confirmText: '开始恢复',
+      success: (res) => {
+        if (res.confirm) {
+          wx.getClipboardData({
+            success: (clipRes) => {
+              this._importBackup(clipRes.data)
+            },
+            fail: () => {
+              wx.showToast({ title: '无法读取剪贴板，请手动粘贴', icon: 'none' })
+            }
+          })
+        }
+      }
+    })
+  },
+
+  /** 导入数据 */
+  _importBackup(jsonStr) {
+    const result = importJSON(jsonStr)
+    if (result.success) {
+      app.refreshData()
+      wx.showToast({ title: '数据已恢复', icon: 'success' })
+    } else {
+      wx.showModal({
+        title: '恢复失败',
+        content: result.message || '数据格式不正确，请检查后重试。',
+        showCancel: false
+      })
+    }
   },
 
   // ====================================================

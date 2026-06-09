@@ -1,0 +1,74 @@
+<!--pages/share/share.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">共享管理</text>
+    <text class="subtitle">与另一半共享待办和日程</text>
+  </view>
+
+  <!-- 共享状态 -->
+  <view class="section" wx:if="{{todoPartner}}">
+    <view class="section-title">待办共享</view>
+    <view class="partner-card">
+      <view class="partner-info">
+        <text class="partner-label">已共享给：</text>
+        <text class="partner-id">{{todoPartner}}</text>
+      </view>
+      <view class="btn-disable" bindtap="onDisableShare" data-type="todo">取消共享</view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{calendarPartner}}">
+    <view class="section-title">日程共享</view>
+    <view class="partner-card">
+      <view class="partner-info">
+        <text class="partner-label">已共享给：</text>
+        <text class="partner-id">{{calendarPartner}}</text>
+      </view>
+      <view class="btn-disable" bindtap="onDisableShare" data-type="calendar">取消共享</view>
+    </view>
+  </view>
+
+  <!-- 生成邀请码 -->
+  <view class="section">
+    <view class="section-title">生成邀请码</view>
+    <view class="invite-type-selector">
+      <view class="type-btn {{inviteType === 'todo' ? 'type-btn--active' : ''}}" bindtap="onSelectType" data-type="todo">待办共享</view>
+      <view class="type-btn {{inviteType === 'calendar' ? 'type-btn--active' : ''}}" bindtap="onSelectType" data-type="calendar">日程共享</view>
+    </view>
+    <view class="invite-box" wx:if="{{!inviteCode}}">
+      <view class="btn-primary" bindtap="onCreateInvite">生成邀请码</view>
+    </view>
+    <view class="invite-code-box" wx:else>
+      <text class="invite-label">邀请码（24小时有效）：</text>
+      <text class="invite-code">{{inviteCode}}</text>
+      <view class="btn-secondary" bindtap="onCopyCode">复制邀请码</view>
+      <view class="invite-tip">请分享给另一半，对方在「接受邀请」中输入此码</view>
+    </view>
+  </view>
+
+  <!-- 接受邀请 -->
+  <view class="section">
+    <view class="section-title">接受邀请</view>
+    <view class="accept-box">
+      <input class="code-input" placeholder="输入6位邀请码" value="{{inputCode}}" bindinput="onInputCode" maxlength="6" />
+      <view class="btn-primary" bindtap="onAcceptInvite">接受邀请</view>
+    </view>
+  </view>
+
+  <!-- 共享数据预览 -->
+  <view class="section" wx:if="{{sharedTodos.length > 0 || sharedEvents.length > 0}}">
+    <view class="section-title">共享数据预览</view>
+    <view class="shared-preview" wx:if="{{sharedTodos.length > 0}}">
+      <text class="preview-label">对方待办（{{sharedTodos.length}}条）：</text>
+      <view class="preview-item" wx:for="{{sharedTodos}}" wx:key="id">
+        <text>{{item.text}}</text>
+      </view>
+    </view>
+    <view class="shared-preview" wx:if="{{sharedEvents.length > 0}}">
+      <text class="preview-label">对方日程（{{sharedEvents.length}}条）：</text>
+      <view class="preview-item" wx:for="{{sharedEvents}}" wx:key="id">
+        <text>{{item.title}}</text>
+      </view>
+    </view>
+  </view>
+</view>

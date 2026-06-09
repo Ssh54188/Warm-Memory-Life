@@ -75,18 +75,50 @@ function getWeekNumber(dateStr) {
 /** 星期标签 */
 const WEEKDAY_LABELS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 
+/** 星期键名（用于 nav-bar 等组件构建周视图） */
+const DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+
+/** 星期短标签（用于 nav-bar 显示） */
+const DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日']
+
 // ============================================================
 //  数据读写
 // ============================================================
 
-/** 加载全量数据 */
+/** 加载全量数据（含数据完整性校验） */
 function loadAllData() {
-  return storage.get(STORAGE_KEY, {})
+  try {
+    const raw = storage.get(STORAGE_KEY, {})
+    // 检测数据损坏：确保返回的是对象
+    if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+      console.warn('[Data] 数据格式异常，重置为空对象')
+      return {}
+    }
+    return raw
+  } catch (e) {
+    console.error('[Data] 加载数据失败，返回空对象', e)
+    return {}
+  }
 }
 
-/** 保存全量数据 */
+/** 保存全量数据（含失败重试） */
 function saveAllData(data) {
-  return storage.set(STORAGE_KEY, data)
+  try {
+    const ok = storage.set(STORAGE_KEY, data)
+    if (!ok) {
+      console.warn('[Data] 保存失败，尝试重新写入')
+      // 重试一次
+      const retryOk = storage.set(STORAGE_KEY, data)
+      if (!retryOk) {
+        console.error('[Data] 保存重试失败，数据可能丢失')
+        return false
+      }
+    }
+    return true
+  } catch (e) {
+    console.error('[Data] 保存异常', e)
+    return false
+  }
 }
 
 /** 获取某天的数据（无则返回 null） */
@@ -115,7 +147,7 @@ function getAllDates() {
 //  待办事项 API
 // ============================================================
 
-/** 添加待办 */
+/** 添加待办（仅待办，不同步象限） */
 function addTodo(dateStr, text, priority, quadrantTaskId) {
   const all = loadAllData()
   if (!all[dateStr]) all[dateStr] = { todos: [], note: '' }
@@ -129,6 +161,49 @@ function addTodo(dateStr, text, priority, quadrantTaskId) {
     createdAt: new Date().toISOString()
   }
   all[dateStr].todos.push(todo)
+  saveAllData(all)
+  return todo
+}
+
+/**
+ * 原子添加：待办 + 同步写入四象限（单次 load + 单次 save）
+ * 解决 addQuadrantTaskForDate + addTodo 两次独立 load/save 的数据不一致风险
+ */
+function addTodoAtomic(dateStr, text, priority) {
+  const all = loadAllData()
+
+  // 1. 确保日期数据
+  if (!all[dateStr]) all[dateStr] = { todos: [], note: '' }
+
+  // 2. 同步到四象限
+  let quadrantTaskId = null
+  _ensureQuadrantsByDate(all)
+  if (!all._quadrantsByDate[dateStr]) {
+    all._quadrantsByDate[dateStr] = JSON.parse(JSON.stringify(EMPTY_QUADRANTS))
+  }
+  if (all._quadrantsByDate[dateStr][priority]) {
+    const qt = {
+      id: genId(),
+      text,
+      done: false,
+      createdAt: new Date().toISOString()
+    }
+    all._quadrantsByDate[dateStr][priority].push(qt)
+    quadrantTaskId = qt.id
+  }
+
+  // 3. 添加待办
+  const todo = {
+    id: genId(),
+    text,
+    done: false,
+    priority: priority || 'low',
+    quadrantTaskId,
+    createdAt: new Date().toISOString()
+  }
+  all[dateStr].todos.push(todo)
+
+  // 4. 一次性持久化
   saveAllData(all)
   return todo
 }
@@ -484,6 +559,30 @@ function deleteQuadrantTask(quadrantKey, taskId) {
   return true
 }
 
+/** 通过 quadrantTaskId 切换对应待办状态；返回受影响的 todo 或 null */
+function toggleTodoByQuadrantTaskId(dateStr, quadrantTaskId) {
+  const all = loadAllData()
+  const dayData = all[dateStr]
+  if (!dayData || !dayData.todos) return null
+  const todo = dayData.todos.find(t => t.quadrantTaskId === quadrantTaskId)
+  if (!todo) return null
+  todo.done = !todo.done
+  saveAllData(all)
+  return todo
+}
+
+/** 通过 quadrantTaskId 删除对应待办；返回是否删除成功 */
+function deleteTodoByQuadrantTaskId(dateStr, quadrantTaskId) {
+  const all = loadAllData()
+  const dayData = all[dateStr]
+  if (!dayData || !dayData.todos) return false
+  const idx = dayData.todos.findIndex(t => t.quadrantTaskId === quadrantTaskId)
+  if (idx === -1) return false
+  dayData.todos.splice(idx, 1)
+  saveAllData(all)
+  return true
+}
+
 /** 删除四象限任务（指定日期） */
 function deleteQuadrantTaskForDate(dateStr, quadrantKey, taskId) {
   const all = loadAllData()
@@ -509,13 +608,31 @@ function editQuadrantTask(quadrantKey, taskId, newText) {
 
 /** 移动四象限任务到另一个象限 */
 function moveQuadrantTask(fromKey, toKey, taskId) {
+  return moveQuadrantTaskForDate(fmtDate(new Date()), fromKey, toKey, taskId)
+}
+
+/** 编辑四象限任务文本（指定日期） */
+function editQuadrantTaskForDate(dateStr, quadrantKey, taskId, newText) {
   const all = loadAllData()
-  const dateStr = fmtDate(new Date())
+  if (!all._quadrantsByDate || !all._quadrantsByDate[dateStr]) return false
+  const task = (all._quadrantsByDate[dateStr][quadrantKey] || []).find(t => t.id === taskId)
+  if (!task) return false
+  task.text = newText
+  saveAllData(all)
+  return true
+}
+
+/** 移动四象限任务到另一个象限（指定日期） */
+function moveQuadrantTaskForDate(dateStr, fromKey, toKey, taskId) {
+  const all = loadAllData()
   if (!all._quadrantsByDate || !all._quadrantsByDate[dateStr]) return false
   const fromList = all._quadrantsByDate[dateStr][fromKey] || []
   const idx = fromList.findIndex(t => t.id === taskId)
   if (idx === -1) return false
   const task = fromList.splice(idx, 1)[0]
+  if (!all._quadrantsByDate[dateStr][toKey]) {
+    all._quadrantsByDate[dateStr][toKey] = []
+  }
   all._quadrantsByDate[dateStr][toKey].push(task)
   saveAllData(all)
   return true
@@ -724,6 +841,8 @@ module.exports = {
   // 常量
   STORAGE_KEY,
   WEEKDAY_LABELS,
+  DAYS,
+  DAY_LABELS,
   QUADRANT_KEYS,
   QUADRANT_LABELS,
   QUADRANT_COLORS,
@@ -747,6 +866,7 @@ module.exports = {
 
   // 待办
   addTodo,
+  addTodoAtomic,
   toggleTodo,
   deleteTodo,
   getDateTodoStats,
@@ -776,8 +896,14 @@ module.exports = {
   toggleQuadrantTask,
   deleteQuadrantTask,
   editQuadrantTask,
+  editQuadrantTaskForDate,
   moveQuadrantTask,
+  moveQuadrantTaskForDate,
   getQuadrantStats,
+
+  // 待办（按象限任务 ID 反向同步）
+  toggleTodoByQuadrantTaskId,
+  deleteTodoByQuadrantTaskId,
 
   // 四象限（按日期）
   getQuadrantsByDate,

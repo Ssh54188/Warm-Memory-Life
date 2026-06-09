@@ -1,4 +1,4 @@
-<!-- 日程页 — v1.0.2：大日历 + 每日象限 + 待办联动 -->
+<!-- 日程页 — v1.0.3：大日历 + 每日象限 + 待办联动 + 共享支持 -->
 <view class="page" bindtouchstart="onSwipeStart" bindtouchend="onSwipeEnd">
 
   <!-- ========== 日历区（放大） ========== -->
@@ -10,6 +10,8 @@
         <text wx:if="{{!isCurrentMonth}}" class="cal-header__back">回今天</text>
       </view>
       <view class="cal-header__nav" bindtap="onNextMonth">›</view>
+      <navigator url="/pages/share/share" class="cal-header__share" wx:if="{{!sharePartner}}">⇅</navigator>
+      <text class="cal-header__share" wx:else bindtap="onGoShare" style="color: #1e8449;">⟷</text>
     </view>
 
     <view class="cal-weekdays">

@@ -1,5 +1,7 @@
 {
   "description": "暖记生活 — 手账风格个人周计划与习惯管理小程序",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "miniprogramRoot": "./",
   "packOptions": {
     "ignore": [
       {
@@ -8,6 +10,14 @@
       },
       {
         "value": "Md文件",
+        "type": "folder"
+      },
+      {
+        "value": "cloudfunctions",
+        "type": "folder"
+      },
+      {
+        "value": "cloudfunctionTemplate",
         "type": "folder"
       }
     ],
@@ -58,5 +68,6 @@
   "projectname": "shouzhaungApp",
   "condition": {},
   "simulatorPluginLibVersion": {},
-  "editorSetting": {}
+  "editorSetting": {},
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/"
 }

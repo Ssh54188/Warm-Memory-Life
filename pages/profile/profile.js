@@ -160,12 +160,16 @@ Page({
   onDeleteAccount() {
     wx.showModal({
       title: '账号注销',
-      content: '注销后所有数据将被清空且不可恢复，确定要注销吗？',
+      content: '注销后个人资料和登录状态将被清除，手账数据会保留在本地。确定要注销吗？',
       confirmText: '确定注销',
       confirmColor: '#d4756b',
       success: (res) => {
         if (res.confirm) {
-          storage.clear()
+          // 仅清除用户/登录相关数据，保留手账核心数据
+          storage.remove('token')
+          storage.remove('weekly-planner-user')
+          storage.remove('weekly-planner-user-id')
+          storage.remove('login_skipped')
           app.globalData.isLoggedIn = false
           app.globalData.userInfo = null
           wx.showToast({ title: '账号已注销', icon: 'success' })

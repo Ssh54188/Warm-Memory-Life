@@ -1,0 +1,9 @@
+{
+  "name": "acceptInvitation",
+  "version": "1.0.0",
+  "description": "接受共享邀请",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

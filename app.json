@@ -12,7 +12,8 @@
     "pages/note/note",
     "pages/login/login",
     "pages/privacy/privacy",
-    "pages/agreement/agreement"
+    "pages/agreement/agreement",
+    "pages/share/share"
   ],
   "window": {
     "navigationBarBackgroundColor": "#faf7f2",
