@@ -74,7 +74,7 @@
 }
 
 .tl-dot__inner {
-  font-size: 18rpx; color: #fff; font-weight: 700;
+  font-size: 18rpx; color: var(--color-white); font-weight: 700;
 }
 
 /* ---- 右侧卡片 ---- */

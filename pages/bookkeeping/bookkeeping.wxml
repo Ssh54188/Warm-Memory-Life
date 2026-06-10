@@ -1,0 +1,174 @@
+<!--
+  记账主页
+  v1.0.3 — 左滑删除 + 扇形图
+-->
+<view class="page" bindtouchstart="onTapRow">
+
+  <!-- 月份导航 -->
+  <view class="month-nav">
+    <view class="month-nav__arrow tappable" bindtap="onPrevMonth">⟨</view>
+    <view class="month-nav__title">{{year}}年{{month}}月</view>
+    <view class="month-nav__arrow tappable" bindtap="onNextMonth">⟩</view>
+  </view>
+
+  <!-- 月度统计 -->
+  <view class="stats">
+    <view class="stats__item stats__item--income">
+      <text class="stats__label">收入</text>
+      <text class="stats__num stats__num--income">{{stats.totalIncome > 0 ? '+' : ''}}{{statsDisplay.income}}</text>
+    </view>
+    <view class="stats__item stats__item--balance">
+      <text class="stats__label">结余</text>
+      <text class="stats__num {{stats.balance > 0 ? 'stats__num--income' : stats.balance < 0 ? 'stats__num--expense' : ''}}">{{stats.balance > 0 ? '+' : stats.balance < 0 ? '-' : ''}}{{statsDisplay.balance}}</text>
+    </view>
+    <view class="stats__item stats__item--expense">
+      <text class="stats__label">支出</text>
+      <text class="stats__num stats__num--expense">{{stats.totalExpense > 0 ? '-' : ''}}{{statsDisplay.expense}}</text>
+    </view>
+  </view>
+
+  <!-- 扇形分类统计（弹层打开时隐藏，防止Canvas原生层级穿透） -->
+  <view class="chart-card" hidden="{{showAdd}}">
+    <view class="chart-card__header">
+      <text class="chart-card__title">📊 分类占比</text>
+      <view class="chart-card__toggle" bindtap="onToggleChart">
+        <text class="chart-toggle__label {{chartType === 'expense' ? 'chart-toggle__label--active' : ''}}">支出</text>
+        <text class="chart-toggle__label {{chartType === 'income' ? 'chart-toggle__label--active' : ''}}">收入</text>
+      </view>
+    </view>
+
+    <view class="chart-body">
+      <view class="chart-canvas-wrap">
+        <canvas type="2d" id="donutCanvas" class="chart-canvas" style="width:280rpx;height:280rpx;"></canvas>
+      </view>
+
+      <view class="chart-legend">
+        <block wx:if="{{chartData.length > 0}}">
+          <view wx:for="{{chartData}}" wx:key="key" class="legend-item">
+            <view class="legend-dot" style="background:{{item.color}};"></view>
+            <text class="legend-emoji">{{item.emoji}}</text>
+            <text class="legend-label">{{item.label}}</text>
+            <text class="legend-percent">{{item.percent}}%</text>
+          </view>
+        </block>
+        <block wx:if="{{chartData.length === 0}}">
+          <view class="legend-empty">本月暂无{{chartType === 'expense' ? '支出' : '收入'}}记录</view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 交易记录（左滑删除） -->
+  <scroll-view scroll-y class="list-scroll" enhanced show-scrollbar="{{false}}">
+    <block wx:if="{{list.length > 0}}">
+      <view
+        wx:for="{{list}}"
+        wx:key="id"
+        class="txn-row-wrap {{item.id === swipedId ? 'txn-row-wrap--open' : ''}}"
+        data-id="{{item.id}}"
+        bindtouchstart="onTouchStart"
+        bindtouchmove="onTouchMove"
+        bindtouchend="onTouchEnd"
+      >
+        <view class="txn-row">
+          <view class="txn-row__left">
+            <text class="txn-row__emoji">{{item.catEmoji}}</text>
+            <view class="txn-row__info">
+              <text class="txn-row__cat">{{item.catLabel}}</text>
+              <text wx:if="{{item.note}}" class="txn-row__note">{{item.note}}</text>
+            </view>
+          </view>
+          <view class="txn-row__right">
+            <text class="txn-row__amount {{item.type === 'income' ? 'txn-row__amount--in' : 'txn-row__amount--out'}}">{{item._sign}}{{item._amountStr}}</text>
+          </view>
+        </view>
+        <view class="txn-row__swipe-del" data-id="{{item.id}}" catchtap="onDelete">删除</view>
+      </view>
+    </block>
+
+    <block wx:if="{{list.length === 0}}">
+      <view class="empty">
+        <text class="empty__emoji">📝</text>
+        <text class="empty__text">还没有记录</text>
+        <text class="empty__hint">点击右下角 + 开始记账</text>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- FAB -->
+  <view class="fab tappable" bindtap="onOpenAdd" hidden="{{showAdd}}">
+    <text class="fab__icon">+</text>
+  </view>
+
+  <!-- 添加弹层 -->
+  <view wx:if="{{showAdd}}" class="mask" catchtap="onCloseAdd">
+    <view class="add-panel" catchtap="preventBubble">
+      <view class="add-panel__title">记一笔</view>
+
+      <!-- 类型切换 -->
+      <view class="add-type">
+        <view
+          class="add-type__btn add-type__btn--out {{addType === 'expense' ? 'add-type__btn--active' : ''}}"
+          data-type="expense"
+          bindtap="onSwitchType"
+        >支出</view>
+        <view
+          class="add-type__btn add-type__btn--in {{addType === 'income' ? 'add-type__btn--active' : ''}}"
+          data-type="income"
+          bindtap="onSwitchType"
+        >收入</view>
+      </view>
+
+      <!-- 金额 -->
+      <view class="add-amount">
+        <text class="add-amount__sign">{{addType === 'expense' ? '-' : '+'}}¥</text>
+        <input
+          class="add-amount__input"
+          type="digit"
+          placeholder="0.00"
+          focus="{{showAdd}}"
+          value="{{addAmount}}"
+          bindinput="onAmountInput"
+        />
+      </view>
+
+      <!-- 分类 -->
+      <view class="add-cats">
+        <view
+          wx:for="{{activeCats}}"
+          wx:key="key"
+          class="add-cat {{addCategory === item.key ? 'add-cat--selected' : ''}}"
+          data-key="{{item.key}}"
+          bindtap="onPickCategory"
+        >
+          <text class="add-cat__emoji">{{item.emoji}}</text>
+          <text class="add-cat__label">{{item.label}}</text>
+        </view>
+      </view>
+
+      <!-- 日期 & 备注 -->
+      <view class="add-extra">
+        <view class="add-extra__row">
+          <text class="add-extra__label">日期</text>
+          <picker mode="date" value="{{addDate}}" bindchange="onDateChange">
+            <text class="add-extra__value">{{addDate}}</text>
+          </picker>
+        </view>
+        <view class="add-extra__row">
+          <text class="add-extra__label">备注</text>
+          <input
+            class="add-extra__input"
+            placeholder="选填"
+            value="{{addNote}}"
+            bindinput="onNoteInput"
+            maxlength="20"
+          />
+        </view>
+      </view>
+
+      <!-- 确认 -->
+      <view class="add-confirm tappable" bindtap="onConfirmAdd">确认</view>
+    </view>
+  </view>
+
+</view>

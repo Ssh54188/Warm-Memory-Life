@@ -1,0 +1,9 @@
+{
+  "name": "syncUserInfo",
+  "version": "1.0.0",
+  "description": "用户信息云端同步 + 手机号解密",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "^3.0.4"
+  }
+}

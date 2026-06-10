@@ -8,6 +8,7 @@ const {
   getQuadrantsByDate, QUADRANT_KEYS, QUADRANT_LABELS, QUADRANT_COLORS
 } = require('../../utils/data')
 const storage = require('../../utils/storage')
+const bk = require('../../utils/bookkeeping')
 const app = getApp()
 
 Page({
@@ -26,7 +27,8 @@ Page({
     todayStats: {
       todoDone: 0, todoTotal: 0,
       habitDone: 0, habitTotal: 0,
-      hasNote: false, notePreview: ''
+      hasNote: false, notePreview: '',
+      finIncome: 0, finExpense: 0
     },
     todayCompletion: 0,
 
@@ -45,6 +47,11 @@ Page({
   // ====================================================
 
   onLoad() {
+    // 登录守卫：未登录 → 跳转登录页
+    if (!app.globalData.isLoggedIn) {
+      wx.reLaunch({ url: '/pages/login/login' })
+      return
+    }
     this._loadAll()
   },
 
@@ -127,7 +134,18 @@ Page({
       habitDone: todayHabitDone,
       habitTotal: activeHabitNames.length,
       hasNote: !!todayNote,
-      notePreview: todayNote ? todayNote.substring(0, 30) : ''
+      notePreview: todayNote ? todayNote.substring(0, 30) : '',
+      finIncome: 0,
+      finExpense: 0
+    }
+
+    // 记账今日统计
+    try {
+      const finStats = bk.todayStats()
+      todayStats.finIncome = finStats.income
+      todayStats.finExpense = finStats.expense
+    } catch (e) {
+      // 记账模块可能未初始化，忽略
     }
 
     const todayDone = todayStats.todoDone + todayStats.habitDone
@@ -248,6 +266,10 @@ Page({
 
   goNotes() {
     wx.navigateTo({ url: '/pages/note/note' })
+  },
+
+  goBookkeeping() {
+    wx.navigateTo({ url: '/pages/bookkeeping/bookkeeping' })
   },
 
   goQuadrant() {

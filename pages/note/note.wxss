@@ -87,7 +87,7 @@
   min-height: 400rpx;
   padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl) 52rpx;
   background:
-    linear-gradient(to right, transparent 40rpx, #e8c9c0 40rpx, #e8c9c0 42rpx, transparent 42rpx),
+    linear-gradient(to right, transparent 40rpx, var(--color-accent-pink) 40rpx, var(--color-accent-pink) 42rpx, transparent 42rpx),
     repeating-linear-gradient(transparent, transparent 47rpx, var(--color-divider) 47rpx, var(--color-divider) 48rpx);
   background-color: var(--color-white);
   border-radius: var(--radius-md);

@@ -1,5 +1,5 @@
 /**
- * 暖记生活 v1.0.2 — 全局样式系统
+ * 暖记生活 v1.0.3 — 全局样式系统
  * 设计 Token 基于需求文档 §13 UI 风格规范
  */
 
@@ -8,7 +8,7 @@
    ======================================== */
 
 page {
-  /* ---- 颜色体系 v1.0.2 ---- */
+  /* ---- 颜色体系 v1.0.3 ---- */
   --color-paper: #faf7f2;          /* 纸张底色 — 米白 */
   --color-paper-dark: #f0ebe0;     /* 纸张暗纹 */
   --color-primary: #c09880;        /* 主色 — 暖棕 */
@@ -18,16 +18,28 @@ page {
   --color-accent-pink: #f8e8e0;    /* 粉 */
   --color-accent-green: #d4e9d6;   /* 绿 */
   --color-accent-blue: #dce8f5;    /* 蓝 */
+  --color-accent-peach: #fceaea;   /* 桃 — 记账支出浅底 */
 
   --color-text: #5c4a3a;           /* 正文深棕 */
   --color-text-secondary: #8b7355; /* 次要文字中棕 */
   --color-text-light: #b8a99a;     /* 提示文字 */
+  --color-text-muted: #888780;     /* 弱化文字 — 记账标签 */
   --color-border: #e0d8cc;         /* 边框 */
   --color-divider: #efe8dc;        /* 分割线 */
+  --color-divider-light: #e8e4dc;  /* 分割线浅 */
 
   --color-white: #ffffff;
   --color-danger: #d4756b;         /* 删除/警告 */
   --color-success: #7ba587;        /* 完成/成功 */
+
+  /* v1.0.3+ 扩展 */
+  --color-income: #d85a30;         /* 收入金额红（涨） */
+  --color-income-light: #fceaea;   /* 收入浅底 */
+  --color-expense: #1d9e75;        /* 支出金额绿（跌） */
+  --color-expense-light: #e6f7ed;  /* 支出浅底 */
+  --color-primary-rgb: 192, 152, 128;  /* 主色 RGB（供 rgba 使用）*/
+  --color-surface: #f1efe8;        /* 通用底板 — 卡片内部区域 */
+  --color-surface-warm: #fdf8f0;   /* 暖色底板 — 我的页/登录页 */
 
   /* ---- 四象限颜色 ---- */
   --color-q1: #e74c3c;             /* 重要且紧急 — 红 */
@@ -115,7 +127,7 @@ page {
 
 .tag--high { background: #f8d7da; color: #a94442; }
 .tag--mid  { background: #fef3cd; color: #8a6d3b; }
-.tag--low  { background: var(--color-accent-green); color: #3c6e47; }
+.tag--low  { background: var(--color-accent-green); color: var(--color-success); }
 
 /* 按钮 */
 .btn {
@@ -206,6 +218,75 @@ page {
 }
 
 /* ========================================
+   v1.0.3+ 全局可复用组件类
+   ======================================== */
+
+/* 通用遮罩层 */
+.modal-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 100;
+}
+
+/* 通用统计卡片容器 */
+.stat-card {
+  display: flex;
+  margin: 0 var(--spacing-md) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* 通用列表行 */
+.list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx var(--spacing-md);
+  border-bottom: 1rpx solid var(--color-divider);
+}
+.list-row:last-child { border-bottom: none; }
+.list-row:active { background: var(--color-surface); }
+
+/* 通用分段控制器 */
+.segmented-control {
+  display: flex;
+  gap: 16rpx;
+  padding: 4rpx;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+}
+.segmented-control__item {
+  flex: 1;
+  padding: 16rpx 0;
+  text-align: center;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+}
+.segmented-control__item--active {
+  background: var(--color-white);
+  color: var(--color-text);
+  font-weight: 500;
+  box-shadow: 0 1rpx 4rpx rgba(0,0,0,0.06);
+}
+
+/* ========================================
+   v1.0.3+ 统一交互反馈
+   ======================================== */
+
+.tappable:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+  transition: all 120ms ease;
+}
+.tappable-row:active {
+  background: var(--color-surface);
+  transition: background 100ms ease;
+}
+
+/* ========================================
    全局过渡动画
    ======================================== */
 
@@ -225,18 +306,6 @@ page {
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
-}
-
-/* 按钮点击反馈 */
-.btn:active {
-  transform: scale(0.96);
-  transition: transform 0.1s ease;
-}
-
-/* 可点击元素通用反馈 */
-[bindtap]:active,
-[catchtap]:active {
-  transition: opacity 0.1s ease;
 }
 
 /* 安全区域适配 */

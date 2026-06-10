@@ -1,0 +1,9 @@
+{
+  "name": "syncTodoToCloud",
+  "version": "1.0.0",
+  "description": "同步待办数据到云端数据库",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

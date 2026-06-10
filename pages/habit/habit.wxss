@@ -60,7 +60,7 @@
 }
 
 .stats-card--highlight {
-  background: linear-gradient(135deg, #f0f7f1, var(--color-white));
+  background: linear-gradient(135deg, var(--color-income-light), var(--color-white));
   border: 1rpx solid var(--color-accent-green);
 }
 
@@ -156,7 +156,7 @@
 }
 
 .habit-cell--done {
-  background: #e8f5e9;
+  background: var(--color-income-light);
   border-color: var(--color-success);
   color: var(--color-success);
   animation: popIn 0.25s ease;
@@ -165,11 +165,11 @@
 .habit-cell--today {
   border-color: var(--color-primary);
   border-width: 3rpx;
-  background: rgba(192, 152, 128, 0.06);
+  background: rgba(var(--color-primary-rgb), 0.06);
 }
 
 .habit-cell--today.habit-cell--done {
-  background: #e8f5e9;
+  background: var(--color-income-light);
   border-color: var(--color-primary);
   border-width: 3rpx;
 }
@@ -413,25 +413,25 @@
   height: 100rpx;
   padding: 0 var(--spacing-md);
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, #faf7f2 0%, #f5efe8 100%);
+  background: linear-gradient(135deg, var(--color-paper) 0%, var(--color-surface) 100%);
   border: 2rpx solid var(--color-primary-light);
   font-size: 56rpx;
   font-weight: 700;
   text-align: center;
   box-sizing: border-box;
   color: var(--color-primary);
-  box-shadow: inset 0 2rpx 8rpx rgba(192, 152, 128, 0.1);
+  box-shadow: inset 0 2rpx 8rpx rgba(var(--color-primary-rgb), 0.1);
   letter-spacing: 2rpx;
 }
 
 .duration-input:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 4rpx rgba(192, 152, 128, 0.15), inset 0 2rpx 8rpx rgba(192, 152, 128, 0.1);
+  box-shadow: 0 0 0 4rpx rgba(var(--color-primary-rgb), 0.15), inset 0 2rpx 8rpx rgba(var(--color-primary-rgb), 0.1);
 }
 
 .duration-unit {
   padding: 20rpx 32rpx;
-  background: linear-gradient(135deg, #f5efe8 0%, #f0e8dc 100%);
+  background: linear-gradient(135deg, var(--color-surface) 0%, #f0e8dc 100%);
   border-radius: var(--radius-lg);
   font-size: var(--font-base);
   font-weight: 600;
@@ -449,7 +449,7 @@
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: var(--color-white);
   border-color: var(--color-primary);
-  box-shadow: 0 4rpx 12rpx rgba(192, 152, 128, 0.25);
+  box-shadow: 0 4rpx 12rpx rgba(var(--color-primary-rgb), 0.25);
 }
 
 .duration-unit--active:active {

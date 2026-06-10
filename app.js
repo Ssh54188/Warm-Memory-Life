@@ -8,6 +8,7 @@ const {
   getCurrentWeekStart, getHabits, getActiveHabits, fmtDate
 } = require('./utils/data')
 const storage = require('./utils/storage')
+const { checkAndRenewSubscription, getSubscriptionDetail } = require('./utils/subscribeMessage')
 
 // 必须在 App() 注册之前初始化云环境，否则页面 onLoad 时云 API 尚未就绪
 if (wx.cloud) {
@@ -28,12 +29,7 @@ App({
   },
 
   onLaunch() {
-    // 0. 初始化云开发环境（必须在其他云 API 之前调用）
-    if (wx.cloud) {
-      wx.cloud.init({
-        env: 'cloud1-d4go8n0ph6464342d'
-      })
-    }
+    // 0. 云环境已在 App() 注册前初始化（见文件顶部）
 
     // 1. 检查登录态（同步读取缓存，不阻塞）
     this._checkLogin()
@@ -61,13 +57,43 @@ App({
     }, 500)
   },
 
-  /** 检查登录态 */
+  /** App 显示时检查订阅授权状态 + 重新验证登录态 */
+  onShow() {
+    // 每次从后台恢复都重新检查登录态（防 storage 被清/Token 失效）
+    this._checkLogin()
+
+    // 检查订阅消息授权状态，如需续授权则提示
+    checkAndRenewSubscription().then(valid => {
+      if (!valid) {
+        const detail = getSubscriptionDetail()
+        if (detail.needsRenew) {
+          console.log('[App] 订阅授权需要续期', detail)
+          // 不主动弹窗，由用户进入提醒设置时再提示
+        }
+      }
+    }).catch(err => {
+      console.error('[App] 检查订阅状态失败', err)
+    })
+  },
+
+  /** 检查登录态（冷启动 + 后台恢复均调用） */
   _checkLogin() {
-    const token = storage.get('token', '')
-    const userInfo = storage.get('weekly-planner-user', null)
-    if (token && userInfo) {
-      this.globalData.isLoggedIn = true
-      this.globalData.userInfo = userInfo
+    try {
+      const token = storage.get('token', '')
+      const userInfo = storage.get('weekly-planner-user', null)
+      if (token && userInfo) {
+        this.globalData.isLoggedIn = true
+        this.globalData.userInfo = userInfo
+        console.log('[App] 登录态有效')
+      } else {
+        this.globalData.isLoggedIn = false
+        this.globalData.userInfo = null
+        console.log('[App] 未登录或登录态失效')
+      }
+    } catch (e) {
+      console.error('[App] 登录态检查异常', e)
+      this.globalData.isLoggedIn = false
+      this.globalData.userInfo = null
     }
   },
 

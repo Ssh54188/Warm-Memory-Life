@@ -41,6 +41,11 @@
         <text class="menu-item__label">习惯打卡</text>
         <text class="menu-item__arrow">›</text>
       </view>
+      <view class="menu-item" bindtap="goBookkeeping">
+        <view class="menu-item__icon menu-item__icon--finance"><text>💰</text></view>
+        <text class="menu-item__label">记账</text>
+        <text class="menu-item__arrow">›</text>
+      </view>
       <view class="menu-item" bindtap="goNotes">
         <view class="menu-item__icon menu-item__icon--note"><text>📝</text></view>
         <text class="menu-item__label">记事本</text>
@@ -69,6 +74,15 @@
       </view>
     </view>
 
+    <!-- ====== 提醒设置 ====== -->
+    <view class="menu-section">
+      <view class="menu-item" bindtap="onOpenReminderSettings">
+        <view class="menu-item__icon menu-item__icon--reminder"><text>🔔</text></view>
+        <text class="menu-item__label">提醒设置</text>
+        <text class="menu-item__arrow">›</text>
+      </view>
+    </view>
+
     <!-- 存储信息 -->
     <view class="storage-info">
       <text>本地存储：{{storageInfo.size}}KB / 10240KB（{{storageInfo.percent}}%）</text>
@@ -81,9 +95,108 @@
 
     <!-- 底部 -->
     <view class="footer">
-      <text>暖记生活 v2.0</text>
+      <text>暖记生活 v1.0.3</text>
     </view>
   </scroll-view>
+
+  <!-- ====== 提醒设置面板 ====== -->
+  <view wx:if="{{showReminderPanel}}" class="reminder-mask" bindtap="onCloseReminderSettings">
+    <view class="reminder-panel reminder-panel--show" catchtap="preventBubble">
+
+      <!-- 面板头部 -->
+      <view class="reminder-panel__header">
+        <text class="reminder-panel__title">提醒设置</text>
+        <view class="reminder-panel__close" bindtap="onCloseReminderSettings">✕</view>
+      </view>
+
+      <!-- 1. 主开关 -->
+      <view class="reminder-panel__section">
+        <view class="reminder-panel__row">
+          <view class="reminder-panel__row-left">
+            <text class="reminder-panel__label">每日待办提醒</text>
+            <text class="reminder-panel__desc">{{reminderEnabled ? '已开启，到点为你检查待办清单 📋' : '开启后，未完成的待办将准时提醒你'}}</text>
+          </view>
+          <switch
+            class="reminder-panel__switch"
+            checked="{{reminderEnabled}}"
+            bindchange="onReminderToggle"
+            color="#b8956a"
+          />
+        </view>
+      </view>
+
+      <!-- 2. 提醒时间（开启后显示） -->
+      <view class="reminder-panel__section" wx:if="{{reminderEnabled}}">
+        <text class="reminder-panel__section-title">提醒时间</text>
+        <picker mode="time" value="{{reminderTime}}" bindchange="onReminderTimeChange">
+          <view class="reminder-panel__time-picker">
+            <view class="reminder-panel__time-left">
+              <text class="reminder-panel__time-text">{{reminderTime}}</text>
+              <text class="reminder-panel__time-hint">点击修改时间</text>
+            </view>
+            <text class="reminder-panel__time-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 3. 授权引导（开启后显示） -->
+      <view class="reminder-panel__section" wx:if="{{reminderEnabled}}">
+
+        <!-- 已授权有配额 -->
+        <view wx:if="{{subscriptionStatus === 'granted'}}" class="reminder-auth-granted">
+          <view class="reminder-auth-granted__icon">✅</view>
+          <view class="reminder-auth-granted__body">
+            <text class="reminder-auth-granted__title">剩余 {{subscriptionQuota}} 条消息 · {{authDaysRemaining}} 天后到期</text>
+            <text class="reminder-auth-granted__desc">将在每天 {{reminderTime}} 检查当日未完成待办</text>
+          </view>
+          <view class="reminder-auth-granted__renew" bindtap="onRequestSubscribe">续期</view>
+        </view>
+
+        <!-- 配额用完 -->
+        <view wx:elif="{{subscriptionStatus === 'quota_empty'}}" class="reminder-auth-card">
+          <view class="reminder-auth-card__icon">📭</view>
+          <view class="reminder-auth-card__body">
+            <text class="reminder-auth-card__title">消息配额已用完</text>
+            <text class="reminder-auth-card__desc">点续期弹一次框 = 补3条，不用天天授权。</text>
+          </view>
+          <view class="reminder-auth-card__btn" bindtap="onRequestSubscribe">续期</view>
+        </view>
+
+        <!-- 未授权/已过期 -->
+        <view wx:elif="{{subscriptionStatus === 'unverified'}}" class="reminder-auth-card">
+          <view class="reminder-auth-card__icon">📱</view>
+          <view class="reminder-auth-card__body">
+            <text class="reminder-auth-card__title">请在真机上测试</text>
+            <text class="reminder-auth-card__desc">模拟器不支持订阅消息，切换到真机调试即可体验。</text>
+          </view>
+        </view>
+
+        <!-- 未授权/已过期 -->
+        <view wx:else class="reminder-auth-card">
+          <view class="reminder-auth-card__icon">🔔</view>
+          <view class="reminder-auth-card__body">
+            <text class="reminder-auth-card__title">{{subscriptionStatus === 'expired' ? '授权已过期，点击续期' : '还差一步，授权接收提醒'}}</text>
+            <text class="reminder-auth-card__desc">一次弹框 = 3条消息，不用天天授权。</text>
+          </view>
+          <view class="reminder-auth-card__btn" bindtap="onRequestSubscribe">去授权</view>
+        </view>
+
+      </view>
+
+      <!-- 4. 底部说明（开启后显示） -->
+      <view class="reminder-panel__tip" wx:if="{{reminderEnabled}}">
+        <text class="reminder-panel__tip-icon">💡</text>
+        <text class="reminder-panel__tip-text">提醒通过微信「服务通知」下发，不打扰、不弹窗，在通知栏轻轻推一下</text>
+      </view>
+
+      <!-- 未开启时的空状态引导 -->
+      <view class="reminder-panel__idle" wx:if="{{!reminderEnabled}}">
+        <text class="reminder-panel__idle-icon">🌅</text>
+        <text class="reminder-panel__idle-text">开启后，再也不会忘记待办的事</text>
+      </view>
+
+    </view>
+  </view>
 
   <!-- ====== 昵称编辑弹窗 ====== -->
   <view wx:if="{{showEditNickname}}" class="nickname-modal-mask" bindtap="onCancelNickname">

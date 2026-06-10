@@ -1,183 +1,435 @@
-/* 个人资料页 — 暖色调风格 */
+/* 个人资料页 v2 — 头像大卡 + 分组卡片 + 进度条 */
+
 .page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #fdf8f0 0%, #f5ede0 30%, #f0e6d8 100%);
+  background: linear-gradient(180deg, #fdf8f0 0%, #f5ede0 40%, var(--color-surface) 100%);
 }
 
 .page__body {
-  padding-top: var(--spacing-md);
+  padding-top: 40rpx;
 }
 
 /* ========================================
-   资料行
+   Hero 卡片
    ======================================== */
-.profile-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 28rpx var(--spacing-md);
+.hero-card {
+  margin: 0 32rpx;
+  padding: 48rpx 40rpx 36rpx;
   background: var(--color-white);
-  margin: 0 var(--spacing-md);
-  border-bottom: 1rpx solid var(--color-divider);
-  min-height: 96rpx;
-}
-
-.profile-row:first-child {
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  margin-top: var(--spacing-sm);
-}
-
-.profile-row:active {
-  background: linear-gradient(135deg, #fdf8f0 0%, #faf5ec 100%);
-}
-
-.profile-row__label {
-  font-size: var(--font-base);
-  color: var(--color-text);
-  font-weight: 500;
-  flex-shrink: 0;
-}
-
-.profile-row__value {
-  font-size: var(--font-base);
-  color: #9c8b7a;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 4rpx 24rpx rgba(var(--color-primary-rgb), 0.06),
+    0 1rpx 4rpx rgba(var(--color-primary-rgb), 0.04);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8rpx;
+  position: relative;
+  overflow: hidden;
 }
 
-.profile-row__value--link {
-  color: #9c8b7a;
-}
-
-.profile-row__value--avatar {
-  gap: 12rpx;
-}
-
-.profile-row__arrow {
-  font-size: 32rpx;
-  color: #d0c8bc;
-  flex-shrink: 0;
+/* 顶部装饰线 */
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rpx;
+  background: linear-gradient(90deg, var(--color-primary-light) 0%, var(--color-primary) 50%, var(--color-primary-dark) 100%);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 /* ---- 头像 ---- */
-.profile-avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 50%;
-  display: block;
-  border: 3rpx solid #e8d5c0;
-  box-shadow: 0 4rpx 16rpx rgba(139, 94, 60, 0.1);
+.hero-avatar-wrap {
+  position: relative;
+  margin-top: 12rpx;
 }
 
-.profile-avatar--placeholder {
-  background: linear-gradient(135deg, #f0e6d8 0%, #e8d8c0 100%);
+.hero-avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  display: block;
+  border: 4rpx solid var(--color-border);
+  box-shadow:
+    0 8rpx 32rpx rgba(var(--color-primary-rgb), 0.12),
+    0 0 0 8rpx rgba(220, 190, 160, 0.12);
+  transition: transform 0.2s;
+}
+
+.hero-avatar-wrap:active .hero-avatar {
+  transform: scale(0.96);
+}
+
+.hero-avatar--placeholder {
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 52rpx;
-  border: 3rpx dashed #c8b89a;
+  border-style: dashed;
+  border-color: var(--color-text-light);
+}
+
+.hero-avatar__emoji {
+  font-size: 64rpx;
+}
+
+.hero-avatar__badge {
+  position: absolute;
+  bottom: 4rpx;
+  right: 4rpx;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: var(--color-white);
+  border: 2rpx solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(var(--color-primary-rgb), 0.1);
+}
+
+/* ---- 昵称 ---- */
+.hero-nickname {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 24rpx;
+  padding: 12rpx 24rpx;
+  border-radius: var(--radius-full);
+  transition: background 0.2s;
+}
+
+.hero-nickname:active {
+  background: rgba(var(--color-primary-rgb), 0.08);
+}
+
+.hero-nickname__text {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  max-width: 400rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hero-nickname__edit {
+  font-size: 24rpx;
+  opacity: 0.5;
+}
+
+/* ---- UID ---- */
+.hero-uid {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 8rpx;
+  padding: 8rpx 20rpx;
+  border-radius: var(--radius-full);
+  background: rgba(var(--color-primary-rgb), 0.06);
+}
+
+.hero-uid:active {
+  background: rgba(var(--color-primary-rgb), 0.14);
+}
+
+.hero-uid__label {
+  font-size: var(--font-xs);
+  color: var(--color-primary);
+  font-weight: 500;
+  letter-spacing: 1rpx;
+}
+
+.hero-uid__value {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  max-width: 320rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hero-uid__copy {
+  font-size: 22rpx;
+  opacity: 0.6;
+}
+
+/* ---- 资料完整度 ---- */
+.hero-completion {
+  width: 100%;
+  margin-top: 28rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid var(--color-divider);
+}
+
+.hero-completion__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.hero-completion__label {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.hero-completion__percent {
+  font-size: var(--font-sm);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.hero-completion__bar {
+  width: 100%;
+  height: 8rpx;
+  background: var(--color-surface);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.hero-completion__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ========================================
-   提示 & 按钮 & 底部
+   基础信息卡片
    ======================================== */
-.profile-tip {
-  text-align: center;
-  padding: 32rpx var(--spacing-md);
-  font-size: var(--font-sm);
-  color: #c8b8a0;
-  margin-top: var(--spacing-md);
+.info-card {
+  margin: 24rpx 32rpx;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow:
+    0 4rpx 24rpx rgba(var(--color-primary-rgb), 0.06),
+    0 1rpx 4rpx rgba(var(--color-primary-rgb), 0.04);
 }
 
-.profile-btn {
+.info-card__header {
+  padding: 24rpx 32rpx 16rpx;
+}
+
+.info-card__title {
+  font-size: var(--font-sm);
+  color: var(--color-primary);
+  font-weight: 600;
+  letter-spacing: 2rpx;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx;
+  border-bottom: 1rpx solid var(--color-divider);
+  min-height: 96rpx;
+  transition: background 0.15s;
+}
+
+.info-row:active {
+  background: rgba(252, 248, 244, 0.8);
+}
+
+.info-row--last {
+  border-bottom: none;
+}
+
+/* 只读行：无按压反馈、无箭头 */
+.info-row--static:active {
+  background: transparent;
+}
+
+/* getPhoneNumber 按钮伪装为信息行 */
+.info-row__btn-phone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 28rpx 32rpx;
+  border: none;
+  border-bottom: 1rpx solid var(--color-divider);
+  min-height: 96rpx;
+  background: transparent;
+  border-radius: 0;
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.info-row__btn-phone::after {
+  border: none;
+}
+
+.info-row__btn-phone:active {
+  background: rgba(252, 248, 244, 0.8);
+}
+
+.info-row__left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex-shrink: 0;
+}
+
+.info-row__icon {
+  font-size: 32rpx;
+  width: 40rpx;
+  text-align: center;
+}
+
+.info-row__label {
+  font-size: var(--font-base);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.info-row__right {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  max-width: 50%;
+}
+
+.info-row__value {
+  font-size: var(--font-base);
+  color: var(--color-text);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.info-row__value--empty {
+  color: var(--color-text-light);
+  font-size: var(--font-sm);
+}
+
+.info-row__arrow {
+  font-size: 32rpx;
+  color: var(--color-border);
+  flex-shrink: 0;
+}
+
+/* ========================================
+   操作按钮
+   ======================================== */
+.action-section {
+  margin: 32rpx 32rpx 0;
+}
+
+.action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 88rpx;
-  margin: var(--spacing-sm) var(--spacing-md);
+  height: 96rpx;
   border-radius: var(--radius-md);
   font-size: var(--font-base);
   font-weight: 500;
   background: var(--color-white);
+  transition: opacity 0.15s;
+  box-shadow:
+    0 2rpx 12rpx rgba(139, 94, 60, 0.04),
+    0 1rpx 4rpx rgba(139, 94, 60, 0.02);
 }
 
-.profile-btn:active {
-  opacity: 0.8;
+.action-btn:active {
+  opacity: 0.85;
 }
 
-.profile-btn--danger {
-  margin-top: var(--spacing-lg);
+.action-btn--danger {
   color: #d4756b;
-  background: var(--color-white);
-  box-shadow: 0 2rpx 12rpx rgba(212, 117, 107, 0.1);
 }
 
-.profile-btn--ghost {
+.action-btn--ghost {
   color: #b0a090;
-  background: var(--color-white);
-  box-shadow: 0 2rpx 12rpx rgba(160, 120, 88, 0.04);
-}
-
-.profile-footer {
-  height: calc(var(--spacing-xl) + env(safe-area-inset-bottom));
+  margin-top: 16rpx;
 }
 
 /* ========================================
-   昵称编辑弹窗
+   底部安全区
    ======================================== */
-.nickname-modal-mask {
+.safe-bottom {
+  height: calc(64rpx + env(safe-area-inset-bottom));
+}
+
+/* ========================================
+   弹窗（昵称 + 职业共用）
+   ======================================== */
+.modal-mask {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.45);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: modalFadeIn 0.2s ease;
 }
 
-.nickname-modal {
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
   width: 600rpx;
   background: var(--color-white);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.15);
+  padding: 40rpx 36rpx 32rpx;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.15);
+  animation: modalSlideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nickname-modal__title {
+@keyframes modalSlideUp {
+  from { transform: translateY(40rpx); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal__title {
   font-size: var(--font-lg);
   font-weight: 600;
   color: var(--color-text);
   text-align: center;
   display: block;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 28rpx;
 }
 
-.nickname-modal__input {
+.modal__input {
   width: 100%;
   height: 88rpx;
-  padding: 0 var(--spacing-md);
+  padding: 0 24rpx;
   border-radius: var(--radius-md);
   background: var(--color-paper);
   border: 2rpx solid var(--color-border);
   font-size: var(--font-base);
   box-sizing: border-box;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 28rpx;
+  color: var(--color-text);
 }
 
-.nickname-modal__input:focus {
+.modal__input:focus {
   border-color: var(--color-primary);
+  background: var(--color-white);
 }
 
-.nickname-modal__actions {
+.modal__actions {
   display: flex;
-  gap: var(--spacing-md);
+  gap: 20rpx;
 }
 
-.nickname-modal__btn {
+.modal__btn {
   flex: 1;
   height: 80rpx;
   display: flex;
@@ -186,15 +438,19 @@
   border-radius: var(--radius-md);
   font-size: var(--font-base);
   font-weight: 500;
+  transition: opacity 0.15s;
 }
 
-.nickname-modal__btn--cancel {
-  background: var(--color-paper);
+.modal__btn:active {
+  opacity: 0.8;
+}
+
+.modal__btn--cancel {
+  background: var(--color-surface);
   color: var(--color-text-secondary);
-  border: 2rpx solid var(--color-border);
 }
 
-.nickname-modal__btn--confirm {
+.modal__btn--confirm {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
 }

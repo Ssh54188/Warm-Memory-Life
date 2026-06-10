@@ -98,8 +98,8 @@
   margin-left: 12rpx;
   border: none;
   border-radius: 20rpx;
-  background: linear-gradient(135deg, #c09880 0%, #a07858 100%);
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-white);
   font-size: 20rpx;
   font-weight: 500;
   line-height: 1;
@@ -154,6 +154,12 @@
   justify-content: center;
   font-size: 24rpx;
   flex-shrink: 0;
+  transition: all 120ms ease;
+}
+
+.todo-check:active {
+  transform: scale(0.92);
+  background: var(--color-surface);
 }
 
 .todo-check--done {
@@ -181,17 +187,17 @@
   padding: 2rpx 10rpx;
   border-radius: var(--radius-sm);
   flex-shrink: 0;
-  background: #eaecee;
-  color: #5d6d7e;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
 }
-.tag--urgent-important              { background: #fde8e8; color: #c0392b; }
+.tag--urgent-important              { background: var(--color-accent-pink); color: #c0392b; }
 .tag--not-urgent-important          { background: #e8f5e9; color: #1e8449; }
 .tag--urgent-not-important          { background: #fef3e2; color: #b8730a; }
-.tag--not-urgent-not-important      { background: #eaecee; color: #5d6d7e; }
+.tag--not-urgent-not-important      { background: var(--color-surface); color: #5d6d7e; }
 /* 兼容旧数据 */
-.tag--low                           { background: #eaecee; color: #5d6d7e; }
+.tag--low                           { background: var(--color-surface); color: var(--color-text-muted); }
 .tag--mid                           { background: #fef3e2; color: #b8730a; }
-.tag--high                          { background: #fde8e8; color: #c0392b; }
+.tag--high                          { background: var(--color-accent-pink); color: #c0392b; }
 
 .todo-delete {
   width: 48rpx;
@@ -242,13 +248,13 @@
 
 /* 紧急重要 - 红 */
 .q-red {
-  background: #fde8e8;
+  background: var(--color-accent-pink);
   color: #c0392b;
-  border-color: #fde8e8;
+  border-color: var(--color-accent-pink);
 }
 .q-red.quadrant-tag--active {
   background: #c0392b;
-  color: #fff;
+  color: var(--color-white);
   border-color: #c0392b;
   font-weight: 600;
 }
@@ -261,7 +267,7 @@
 }
 .q-green.quadrant-tag--active {
   background: #1e8449;
-  color: #fff;
+  color: var(--color-white);
   border-color: #1e8449;
   font-weight: 600;
 }
@@ -274,21 +280,21 @@
 }
 .q-orange.quadrant-tag--active {
   background: #b8730a;
-  color: #fff;
+  color: var(--color-white);
   border-color: #b8730a;
   font-weight: 600;
 }
 
 /* 普通 - 灰 */
 .q-gray {
-  background: #eaecee;
-  color: #5d6d7e;
-  border-color: #eaecee;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  border-color: var(--color-surface);
 }
 .q-gray.quadrant-tag--active {
-  background: #5d6d7e;
-  color: #fff;
-  border-color: #5d6d7e;
+  background: var(--color-text-muted);
+  color: var(--color-white);
+  border-color: var(--color-text-muted);
   font-weight: 600;
 }
 
@@ -326,7 +332,7 @@
   flex-shrink: 0; transition: all 0.15s;
 }
 .chat-bar__send--ready {
-  background: var(--color-primary); color: #fff;
+  background: var(--color-primary); color: var(--color-white);
 }
 
 /* ========================================

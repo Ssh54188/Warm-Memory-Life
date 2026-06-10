@@ -21,7 +21,7 @@
 .cal-weekdays__item {
   flex: 1; text-align: center; font-size: 20rpx; color: var(--color-text-light); padding: 8rpx 0;
 }
-.cal-weekdays__item--weekend { color: #d4a0a0; }
+.cal-weekdays__item--weekend { color: var(--color-accent-pink); }
 
 .cal-grid { display: flex; flex-wrap: wrap; padding: 2rpx 4rpx; }
 
@@ -31,19 +31,19 @@
   box-sizing: border-box; border-radius: var(--radius-sm); position: relative;
   padding: 2rpx 2rpx;
 }
-.cal-cell:active { background: rgba(192,152,128,0.1); }
+.cal-cell:active { background: rgba(var(--color-primary-rgb), 0.1); }
 .cal-cell--other { opacity: 0.3; }
-.cal-cell--selected { background: rgba(192,152,128,0.18); box-shadow: inset 0 0 0 2rpx var(--color-primary); }
+.cal-cell--selected { background: rgba(var(--color-primary-rgb), 0.18); box-shadow: inset 0 0 0 2rpx var(--color-primary); }
 
 .cal-cell__day {
   font-size: 24rpx; font-weight: 500; color: var(--color-text); line-height: 1;
 }
-.cal-cell__day--weekend { color: #c4956a; }
+.cal-cell__day--weekend { color: var(--color-primary-light); }
 .cal-cell--today {
   background: var(--color-primary-light);
 }
 .cal-cell--today .cal-cell__day {
-  background: var(--color-primary); color: #fff; font-weight: 700;
+  background: var(--color-primary); color: var(--color-white); font-weight: 700;
   width: 36rpx; height: 36rpx; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 22rpx;
@@ -65,8 +65,8 @@
 .cal-dot { width: 10rpx; height: 10rpx; border-radius: 50%; }
 .cal-dot--done { background: var(--color-success); }
 .cal-dot--pending { background: var(--color-primary); }
-.cal-dot--note { background: #d4a0a0; }
-.cal-dot--quad { background: #f39c12; }
+.cal-dot--note { background: var(--color-accent-pink); }
+.cal-dot--quad { background: var(--color-q3); }
 
 /* ======== 详情栏 ======== */
 .detail-bar {
@@ -88,7 +88,7 @@
   background: var(--color-white); border: 1rpx solid var(--color-divider);
   box-sizing: border-box; padding: 6rpx 8rpx; margin-bottom: var(--spacing-xs); overflow: hidden;
 }
-.q-cell--drop { background: rgba(192,152,128,0.08); }
+.q-cell--drop { background: rgba(var(--color-primary-rgb), 0.08); }
 
 .q-cell__head {
   display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
@@ -122,7 +122,7 @@
   display: flex; align-items: center; justify-content: center;
   font-size: 14rpx; color: transparent; flex-shrink: 0;
 }
-.q-task__check--done { background: var(--color-success); border-color: var(--color-success); color: #fff; }
+.q-task__check--done { background: var(--color-success); border-color: var(--color-success); color: var(--color-white); }
 .q-task__text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .q-task__del { font-size: 20rpx; color: var(--color-text-light); padding: 2rpx 6rpx; }
 
@@ -136,6 +136,6 @@
 /* 拖拽 */
 .drag-preview {
   position: fixed; z-index: 1000; padding: 12rpx 20rpx;
-  background: var(--color-primary); color: #fff;
+  background: var(--color-primary); color: var(--color-white);
   border-radius: var(--radius-md); font-size: var(--font-sm); pointer-events: none;
 }

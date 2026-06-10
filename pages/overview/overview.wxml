@@ -88,6 +88,16 @@
             <text class="today-item__preview">{{todayStats.notePreview}}</text>
           </view>
         </view>
+        <view class="today-item today-item--finance" bindtap="goBookkeeping" wx:if="{{todayStats.finIncome > 0 || todayStats.finExpense > 0}}">
+          <text class="today-item__icon">💰</text>
+          <view class="today-item__content">
+            <text class="today-item__label">今日收支</text>
+            <view class="today-item__finance">
+              <text wx:if="{{todayStats.finIncome > 0}}" class="today-finance__in">+{{todayStats.finIncome / 100}}</text>
+              <text wx:if="{{todayStats.finExpense > 0}}" class="today-finance__out">-{{todayStats.finExpense / 100}}</text>
+            </view>
+          </view>
+        </view>
         <view wx:if="{{!todayStats.hasNote && todayStats.todoTotal === 0 && todayStats.habitTotal === 0}}" class="today-empty">
           <text>今天还没有记录，开始规划吧</text>
         </view>
@@ -140,6 +150,10 @@
       <view class="quick-action" bindtap="goNotes">
         <text class="quick-action__icon">📝</text>
         <text class="quick-action__label">笔记</text>
+      </view>
+      <view class="quick-action" bindtap="goBookkeeping">
+        <text class="quick-action__icon">💰</text>
+        <text class="quick-action__label">记账</text>
       </view>
     </view>
 

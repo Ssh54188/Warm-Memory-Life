@@ -13,7 +13,8 @@ const STORAGE_PREFIX = 'wps_'
 function get(key, defaultValue = null) {
   try {
     const data = wx.getStorageSync(STORAGE_PREFIX + key)
-    return data !== '' ? data : defaultValue
+    if (data === undefined || data === null || data === '') return defaultValue
+    return data
   } catch (e) {
     console.warn(`[Storage] 读取失败: ${key}`, e)
     return defaultValue

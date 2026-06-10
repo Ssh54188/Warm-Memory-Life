@@ -1,7 +1,7 @@
-/* 个人中心 — v2.1 暖色调优化 */
+/* 个人中心 — v1.0.3 统一设计系统 */
 .page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #fdf8f0 0%, #f5ede0 30%, #f0e6d8 100%);
+  background: linear-gradient(180deg, var(--color-surface-warm) 0%, var(--color-paper-dark) 30%, var(--color-surface) 100%);
 }
 
 .page__body {
@@ -12,10 +12,10 @@
    用户卡片
    ======================================== */
 .user-card {
-  background: linear-gradient(135deg, #fffaf5 0%, #fff5ec 100%);
+  background: linear-gradient(135deg, var(--color-white) 0%, var(--color-paper) 100%);
   margin: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-lg);
-  box-shadow: 0 4rpx 24rpx rgba(160, 120, 88, 0.08);
+  box-shadow: 0 4rpx 24rpx rgba(var(--color-primary-rgb), 0.08);
   padding: 36rpx var(--spacing-md);
 }
 
@@ -31,18 +31,18 @@
   height: 160rpx;
   border-radius: 50%;
   display: block;
-  border: 3rpx solid #e8d5c0;
-  box-shadow: 0 4rpx 16rpx rgba(139, 94, 60, 0.1);
+  border: 3rpx solid var(--color-border);
+  box-shadow: 0 4rpx 16rpx rgba(var(--color-primary-rgb), 0.1);
   flex-shrink: 0;
 }
 
 .user-avatar--placeholder {
-  background: linear-gradient(135deg, #f0e6d8 0%, #e8d8c0 100%);
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 64rpx;
-  border: 3rpx dashed #c8b89a;
+  border: 3rpx dashed var(--color-text-light);
 }
 
 /* ---- 用户详情 ---- */
@@ -70,7 +70,7 @@
 
 .user-arrow {
   font-size: 32rpx;
-  color: #d0c8bc;
+  color: var(--color-border);
   flex-shrink: 0;
 }
 
@@ -81,7 +81,7 @@
   background: var(--color-white);
   margin: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-lg);
-  box-shadow: 0 2rpx 12rpx rgba(160, 120, 88, 0.04);
+  box-shadow: 0 2rpx 12rpx rgba(var(--color-primary-rgb), 0.04);
   overflow: hidden;
 }
 
@@ -98,25 +98,28 @@
 }
 
 .menu-item:active {
-  background: linear-gradient(135deg, #fdf8f0 0%, #faf5ec 100%);
+  background: var(--color-surface);
 }
 
 .menu-item__icon {
   font-size: 40rpx;
-  width: 56rpx;
-  height: 56rpx;
+  width: 68rpx;
+  height: 68rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14rpx;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
-.menu-item__icon--habit { background: #fff0ee; }
-.menu-item__icon--note { background: #f0eeff; }
-.menu-item__icon--sync { background: #eef4ff; }
-.menu-item__icon--privacy { background: #fff8ee; }
-.menu-item__icon--agreement { background: #fff5ee; }
+.menu-item__icon--habit { background: var(--color-accent-peach); }
+.menu-item__icon--note { background: var(--color-accent-blue); }
+.menu-item__icon--sync { background: var(--color-accent-blue); }
+.menu-item__icon--reminder { background: var(--color-accent-pink); }
+
+.menu-item__icon--privacy { background: var(--color-accent-pink); }
+.menu-item__icon--agreement { background: var(--color-accent-pink); }
+.menu-item__icon--finance { background: var(--color-accent-peach); }
 
 .menu-item__label {
   flex: 1;
@@ -127,14 +130,14 @@
 
 .menu-item__arrow {
   font-size: 36rpx;
-  color: #d0c8bc;
+  color: var(--color-border);
   flex-shrink: 0;
 }
 
 .menu-item__hint {
   font-size: 22rpx;
   color: var(--color-primary);
-  background: rgba(192, 152, 128, 0.08);
+  background: rgba(var(--color-primary-rgb), 0.08);
   padding: 6rpx 16rpx;
   border-radius: var(--radius-full);
   flex-shrink: 0;
@@ -163,7 +166,7 @@
   text-align: center;
   padding: var(--spacing-lg) 0 calc(var(--spacing-xl) + env(safe-area-inset-bottom));
   font-size: var(--font-xs);
-  color: #c8b8a0;
+  color: var(--color-text-light);
 }
 
 .footer text {
@@ -179,7 +182,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.45);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -243,5 +246,285 @@
 
 .nickname-modal__btn--confirm {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
+}
+
+/* ========================================
+   提醒设置面板（核心新增）
+   ======================================== */
+.reminder-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.reminder-panel {
+  width: 100%;
+  max-height: 75vh;
+  background: var(--color-white);
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 0 var(--spacing-lg) calc(var(--spacing-lg) + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+}
+
+.reminder-panel--show {
+  transform: translateY(0);
+}
+
+/* ---- 面板头部 ---- */
+.reminder-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg) 0;
+  border-bottom: 1rpx solid var(--color-divider);
+  position: sticky;
+  top: 0;
+  background: var(--color-white);
+  z-index: 10;
+}
+
+.reminder-panel__title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.reminder-panel__close {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  color: var(--color-text-light);
+  background: var(--color-paper);
+  border-radius: 50%;
+}
+
+/* ---- 设置区块 ---- */
+.reminder-panel__section {
+  padding: var(--spacing-lg) 0;
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.reminder-panel__section:last-child {
+  border-bottom: none;
+}
+
+.reminder-panel__section-title {
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-md);
+  display: block;
+}
+
+/* ---- 行布局 ---- */
+.reminder-panel__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.reminder-panel__row-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.reminder-panel__label {
+  font-size: var(--font-base);
+  color: var(--color-text);
+  font-weight: 500;
+  display: block;
+}
+
+.reminder-panel__desc {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+  margin-top: 6rpx;
+  display: block;
+}
+
+/* ---- 开关样式 ---- */
+.reminder-panel__switch {
+  flex-shrink: 0;
+  transform: scale(0.85);
+}
+
+/* ---- 时间选择器 ---- */
+.reminder-panel__time-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx var(--spacing-md);
+  background: var(--color-paper);
+  border-radius: var(--radius-md);
+  border: 2rpx solid var(--color-border);
+}
+
+.reminder-panel__time-text {
+  font-size: var(--font-lg);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.reminder-panel__time-arrow {
+  font-size: 32rpx;
+  color: var(--color-text-light);
+}
+
+/* ---- 时间选择器 left 区域 ---- */
+.reminder-panel__time-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.reminder-panel__time-hint {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+}
+
+/* ---- 授权引导卡片（未授权） ---- */
+.reminder-auth-card {
+  background: linear-gradient(135deg, var(--color-surface-warm) 0%, var(--color-surface) 100%);
+  border: 2rpx solid rgba(184, 149, 106, 0.2);
+  border-radius: var(--radius-lg, 20rpx);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.reminder-auth-card__icon {
+  font-size: 48rpx;
+  line-height: 1;
+}
+
+.reminder-auth-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.reminder-auth-card__title {
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+}
+
+.reminder-auth-card__desc {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+  line-height: 1.6;
+  display: block;
+}
+
+.reminder-auth-card__btn {
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  padding: 20rpx 0;
+  border-radius: var(--radius-md);
+  text-align: center;
+  margin-top: 4rpx;
+  letter-spacing: 2rpx;
+}
+
+/* ---- 已授权状态 ---- */
+.reminder-auth-granted {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: rgba(82, 196, 26, 0.06);
+  border-radius: var(--radius-md);
+  border: 2rpx solid rgba(82, 196, 26, 0.15);
+}
+
+.reminder-auth-granted__icon {
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.reminder-auth-granted__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.reminder-auth-granted__title {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-success);
+  display: block;
+}
+
+.reminder-auth-granted__desc {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+  display: block;
+}
+
+.reminder-auth-granted__renew {
+  font-size: var(--font-xs);
+  color: var(--color-primary);
+  padding: 8rpx 16rpx;
+  border: 1rpx solid var(--color-primary);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ---- 底部提示信息 ---- */
+.reminder-panel__tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  padding: var(--spacing-md);
+  background: rgba(var(--color-primary-rgb), 0.06);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-md);
+}
+
+.reminder-panel__tip-icon {
+  font-size: 28rpx;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+
+.reminder-panel__tip-text {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+
+/* ---- 未开启时的空状态 ---- */
+.reminder-panel__idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+  padding: 60rpx 0 40rpx;
+}
+
+.reminder-panel__idle-icon {
+  font-size: 80rpx;
+  line-height: 1;
+}
+
+.reminder-panel__idle-text {
+  font-size: var(--font-sm);
+  color: var(--color-text-light);
 }

@@ -55,7 +55,7 @@
 }
 
 .q-cell--drop {
-  background: rgba(192, 152, 128, 0.08);
+  background: rgba(var(--color-primary-rgb), 0.08);
 }
 
 /* 象限标题 */
@@ -140,7 +140,7 @@
 }
 
 .q-task--editing {
-  background: rgba(192, 152, 128, 0.12);
+  background: rgba(var(--color-primary-rgb), 0.12);
 }
 
 .q-task--dragging {
@@ -252,7 +252,7 @@
   z-index: 1000;
   padding: 16rpx 24rpx;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border-radius: var(--radius-md);
   font-size: var(--font-sm);
   box-shadow: var(--shadow-lg);

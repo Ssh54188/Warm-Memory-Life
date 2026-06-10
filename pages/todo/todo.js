@@ -1,6 +1,6 @@
 /**
  * 待办事项 — v1.0.3
- * 按日期管理待办 + 历史记录侧边栏 + 周导航 + 共享支持
+ * 按日期管理待办 + 历史记录侧边栏 + 周导航 + 共享支持 + 云端同步
  */
 const {
   getWeekDates, addTodo, toggleTodo, deleteTodo, clearDoneTodos,
@@ -52,6 +52,8 @@ Page({
     app.refreshData()
     this._loadData()
     this._loadSharedData()
+    // 同步待办到云端（供定时提醒扫描）
+    this._syncTodosToCloud(this.data.activeDate)
   },
 
   // ===================================================
@@ -136,6 +138,29 @@ Page({
     }
   },
 
+  /** 同步待办到云端数据库（供定时提醒扫描） */
+  async _syncTodosToCloud(dateStr) {
+    if (!wx.cloud) return
+    if (!dateStr) return
+
+    try {
+      const dayData = getDateData(dateStr)
+      const todos = dayData ? (dayData.todos || []) : []
+
+      const res = await wx.cloud.callFunction({
+        name: 'syncTodos',
+        data: {
+          date: dateStr,
+          todos: todos
+        }
+      })
+
+      console.log(`[Todo] 已同步 ${todos.length} 条待办到云端`, res.result)
+    } catch (e) {
+      console.error('[Todo] 云端同步异常', e)
+    }
+  },
+
   // ===================================================
   //  周/天导航
   // ===================================================
@@ -206,6 +231,8 @@ Page({
       this._loadSharedData()
       // 同步到云端（使用本地 id 作为云端文档 _id）
       this._syncToCloud('add', { id: newTodo.id, text: finalText, priority, date: this.data.activeDate, done: false })
+      // 同步到云端数据库（供定时提醒扫描）
+      this._syncTodosToCloud(this.data.activeDate)
       wx.showToast({ title: '已添加', icon: 'success', duration: 800 })
     } catch (e) {
       console.error('[Todo] onAdd 异常:', e.message || e)
@@ -224,6 +251,8 @@ Page({
     app.refreshData()
     app.notifyDataChanged()
     this._loadData()
+    // 同步到云端数据库（供定时提醒扫描）
+    this._syncTodosToCloud(this.data.activeDate)
   },
 
   onDelete(e) {
@@ -243,6 +272,8 @@ Page({
           app.refreshData()
           app.notifyDataChanged()
           this._loadData()
+          // 同步到云端数据库（供定时提醒扫描）
+          this._syncTodosToCloud(this.data.activeDate)
           wx.showToast({ title: '已删除', icon: 'success', duration: 800 })
         }
       }
@@ -269,6 +300,8 @@ Page({
           app.refreshData()
           app.notifyDataChanged()
           this._loadData()
+          // 同步到云端数据库（供定时提醒扫描）
+          this._syncTodosToCloud(this.data.activeDate)
           wx.showToast({ title: '已清除', icon: 'success' })
         }
       }

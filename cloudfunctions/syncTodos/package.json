@@ -1,0 +1,9 @@
+{
+  "name": "syncTodos",
+  "version": "1.0.0",
+  "description": "批量同步待办数据到云端",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

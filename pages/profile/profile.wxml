@@ -1,104 +1,147 @@
-<!-- 个人资料页 -->
+<!-- 个人资料页 v2 -->
 <view class="page">
-  <scroll-view class="page__body" scroll-y>
+  <view class="page__body">
 
-    <!-- 头像行 -->
-    <view class="profile-row" bindtap="onAvatarTap">
-      <text class="profile-row__label">头像</text>
-      <view class="profile-row__value profile-row__value--avatar">
+    <!-- ===== Hero 卡片 ===== -->
+    <view class="hero-card">
+      <!-- 头像 -->
+      <view class="hero-avatar-wrap" bindtap="onAvatarTap">
         <image
           wx:if="{{userInfo.avatarUrl}}"
-          class="profile-avatar"
+          class="hero-avatar"
           src="{{userInfo.avatarUrl}}"
           mode="aspectFill"
         />
-        <view wx:else class="profile-avatar profile-avatar--placeholder">👤</view>
-        <text class="profile-row__arrow">›</text>
+        <view wx:else class="hero-avatar hero-avatar--placeholder">
+          <text class="hero-avatar__emoji">👤</text>
+        </view>
+        <view class="hero-avatar__badge">
+          <text>📷</text>
+        </view>
+      </view>
+
+      <!-- 昵称 -->
+      <view class="hero-nickname" bindtap="onNicknameTap">
+        <text class="hero-nickname__text">{{userInfo.nickName || '点击设置昵称'}}</text>
+        <text class="hero-nickname__edit">✏️</text>
+      </view>
+
+      <!-- UID -->
+      <view class="hero-uid" bindtap="onCopyUserId">
+        <text class="hero-uid__label">UID</text>
+        <text class="hero-uid__value">{{userId}}</text>
+        <text class="hero-uid__copy">📋</text>
+      </view>
+
+      <!-- 资料完整度 -->
+      <view class="hero-completion">
+        <view class="hero-completion__header">
+          <text class="hero-completion__label">资料完整度</text>
+          <text class="hero-completion__percent">{{completionPercent}}%</text>
+        </view>
+        <view class="hero-completion__bar">
+          <view class="hero-completion__bar-fill" style="width: {{completionPercent}}%"></view>
+        </view>
       </view>
     </view>
 
-    <!-- 用户ID行 -->
-    <view class="profile-row">
-      <text class="profile-row__label">用户ID</text>
-      <text class="profile-row__value">{{userId}}</text>
-    </view>
+    <!-- ===== 基础信息卡片 ===== -->
+    <view class="info-card">
+      <view class="info-card__header">
+        <text class="info-card__title">基础信息</text>
+      </view>
 
-    <!-- 昵称行 -->
-    <view class="profile-row" bindtap="onNicknameTap">
-      <text class="profile-row__label">昵称</text>
-      <view class="profile-row__value profile-row__value--link">
-        <text>{{userInfo.nickName || '未设置'}}</text>
-        <text class="profile-row__arrow">›</text>
+      <!-- 手机号 - 已绑定：只读展示 -->
+      <view wx:if="{{userInfo.phone}}" class="info-row info-row--static">
+        <view class="info-row__left">
+          <text class="info-row__icon">📱</text>
+          <text class="info-row__label">手机号</text>
+        </view>
+        <view class="info-row__right">
+          <text class="info-row__value">{{userInfo.phone}}</text>
+        </view>
+      </view>
+
+      <!-- 手机号 - 未绑定：微信授权获取 -->
+      <button wx:else class="info-row__btn-phone" open-type="getPhoneNumber" bindgetphonenumber="onGetPhone">
+        <view class="info-row__left">
+          <text class="info-row__icon">📱</text>
+          <text class="info-row__label">手机号</text>
+        </view>
+        <view class="info-row__right">
+          <text class="info-row__value info-row__value--empty">点击绑定</text>
+          <text class="info-row__arrow">›</text>
+        </view>
+      </button>
+
+      <!-- 微信号（只读显示） -->
+      <view class="info-row info-row--static">
+        <view class="info-row__left">
+          <text class="info-row__icon">💬</text>
+          <text class="info-row__label">微信</text>
+        </view>
+        <view class="info-row__right">
+          <text class="info-row__value {{userInfo.wechatName ? '' : 'info-row__value--empty'}}">{{userInfo.wechatName || '未绑定'}}</text>
+        </view>
+      </view>
+
+      <!-- 性别 -->
+      <view class="info-row" bindtap="onGenderTap">
+        <view class="info-row__left">
+          <text class="info-row__icon">👤</text>
+          <text class="info-row__label">性别</text>
+        </view>
+        <view class="info-row__right">
+          <text class="info-row__value {{userInfo.gender ? '' : 'info-row__value--empty'}}">{{userInfo.gender || '未填写'}}</text>
+          <text class="info-row__arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 年龄 -->
+      <view class="info-row" bindtap="onAgeTap">
+        <view class="info-row__left">
+          <text class="info-row__icon">🎂</text>
+          <text class="info-row__label">年龄</text>
+        </view>
+        <view class="info-row__right">
+          <text class="info-row__value {{userInfo.age ? '' : 'info-row__value--empty'}}">{{userInfo.age || '未填写'}}</text>
+          <text class="info-row__arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 职业 -->
+      <view class="info-row info-row--last" bindtap="onOccupationTap">
+        <view class="info-row__left">
+          <text class="info-row__icon">💼</text>
+          <text class="info-row__label">职业</text>
+        </view>
+        <view class="info-row__right">
+          <text class="info-row__value {{userInfo.occupation ? '' : 'info-row__value--empty'}}">{{userInfo.occupation || '未填写'}}</text>
+          <text class="info-row__arrow">›</text>
+        </view>
       </view>
     </view>
 
-    <!-- 手机号行 -->
-    <view class="profile-row">
-      <text class="profile-row__label">手机号</text>
-      <view class="profile-row__value profile-row__value--link">
-        <text>{{userInfo.phone || '未绑定'}}</text>
-        <text wx:if="{{!userInfo.phone}}" class="profile-row__arrow">›</text>
+    <!-- ===== 操作按钮 ===== -->
+    <view class="action-section">
+      <view class="action-btn action-btn--danger" bindtap="onLogout">
+        <text>退出登录</text>
+      </view>
+      <view class="action-btn action-btn--ghost" bindtap="onDeleteAccount">
+        <text>账号注销</text>
       </view>
     </view>
 
-    <!-- 微信行 -->
-    <view class="profile-row">
-      <text class="profile-row__label">微信</text>
-      <text class="profile-row__value">{{userInfo.wechatName || '未绑定'}}</text>
-    </view>
+    <!-- 底部安全区 -->
+    <view class="safe-bottom"></view>
+  </view>
 
-    <!-- 性别行 -->
-    <view class="profile-row">
-      <text class="profile-row__label">性别</text>
-      <view class="profile-row__value profile-row__value--link">
-        <text>{{userInfo.gender || '未填写'}}</text>
-        <text class="profile-row__arrow">›</text>
-      </view>
-    </view>
-
-    <!-- 年龄行 -->
-    <view class="profile-row">
-      <text class="profile-row__label">年龄</text>
-      <view class="profile-row__value profile-row__value--link">
-        <text>{{userInfo.age || '未填写'}}</text>
-        <text class="profile-row__arrow">›</text>
-      </view>
-    </view>
-
-    <!-- 职业行 -->
-    <view class="profile-row">
-      <text class="profile-row__label">职业</text>
-      <view class="profile-row__value profile-row__value--link">
-        <text>{{userInfo.occupation || '未填写'}}</text>
-        <text class="profile-row__arrow">›</text>
-      </view>
-    </view>
-
-    <!-- 提示文字 -->
-    <view class="profile-tip">
-      <text>完善资料可解锁更多功能</text>
-    </view>
-
-    <!-- 退出登录 -->
-    <view class="profile-btn profile-btn--danger" bindtap="onLogout">
-      <text>退出登录</text>
-    </view>
-
-    <!-- 账号注销 -->
-    <view class="profile-btn profile-btn--ghost" bindtap="onDeleteAccount">
-      <text>账号注销</text>
-    </view>
-
-    <!-- 底部占位 -->
-    <view class="profile-footer"></view>
-  </scroll-view>
-
-  <!-- 昵称编辑弹窗 -->
-  <view wx:if="{{showEditNickname}}" class="nickname-modal-mask" bindtap="onCancelNickname">
-    <view class="nickname-modal" catchtap>
-      <text class="nickname-modal__title">修改昵称</text>
+  <!-- ===== 昵称编辑弹窗 ===== -->
+  <view wx:if="{{showEditNickname}}" class="modal-mask" bindtap="onCancelNickname">
+    <view class="modal" catchtap="preventBubble">
+      <text class="modal__title">修改昵称</text>
       <input
-        class="nickname-modal__input"
+        class="modal__input"
         type="text"
         value="{{editNicknameValue}}"
         bindinput="onEditNicknameInput"
@@ -108,9 +151,31 @@
         confirm-type="done"
         bindconfirm="onConfirmNickname"
       />
-      <view class="nickname-modal__actions">
-        <view class="nickname-modal__btn nickname-modal__btn--cancel" bindtap="onCancelNickname">取消</view>
-        <view class="nickname-modal__btn nickname-modal__btn--confirm" bindtap="onConfirmNickname">确定</view>
+      <view class="modal__actions">
+        <view class="modal__btn modal__btn--cancel" bindtap="onCancelNickname">取消</view>
+        <view class="modal__btn modal__btn--confirm" bindtap="onConfirmNickname">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 职业编辑弹窗 ===== -->
+  <view wx:if="{{showEditOccupation}}" class="modal-mask" bindtap="onCancelOccupation">
+    <view class="modal" catchtap="preventBubble">
+      <text class="modal__title">修改职业</text>
+      <input
+        class="modal__input"
+        type="text"
+        value="{{editOccupationValue}}"
+        bindinput="onEditOccupationInput"
+        placeholder="请输入职业"
+        maxlength="30"
+        focus="{{showEditOccupation}}"
+        confirm-type="done"
+        bindconfirm="onConfirmOccupation"
+      />
+      <view class="modal__actions">
+        <view class="modal__btn modal__btn--cancel" bindtap="onCancelOccupation">取消</view>
+        <view class="modal__btn modal__btn--confirm" bindtap="onConfirmOccupation">确定</view>
       </view>
     </view>
   </view>

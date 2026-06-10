@@ -4,6 +4,7 @@
     "pages/todo/todo",
     "pages/calendar/calendar",
     "pages/mine/mine",
+    "pages/bookkeeping/bookkeeping",
     "pages/profile/profile",
     "pages/quadrant/quadrant",
     "pages/timeline/timeline",

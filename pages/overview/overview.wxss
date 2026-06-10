@@ -1,4 +1,4 @@
-/* 本周概览 — v1.0.2 */
+/* 本周概览 — v1.0.3 */
 .page {
   min-height: 100vh;
   background: var(--color-paper);
@@ -76,7 +76,7 @@
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
   border-radius: 50%;
-  background: #efe8dc;
+  background: var(--color-divider);
 }
 
 .progress-ring__left,
@@ -183,7 +183,7 @@
 .day-card--today {
   background: var(--color-primary-light);
   border-color: var(--color-primary);
-  box-shadow: 0 2rpx 8rpx rgba(var(--color-primary-rgb, 192, 120, 107), 0.2);
+  box-shadow: 0 2rpx 8rpx rgba(var(--color-primary-rgb), 0.2);
 }
 
 .day-card__label {
@@ -234,9 +234,9 @@
   gap: 12rpx;
   padding: 16rpx 20rpx;
   margin-bottom: 16rpx;
-  background: linear-gradient(135deg, #faf7f2 0%, #efe8dc 100%);
+  background: linear-gradient(135deg, var(--color-paper) 0%, var(--color-divider) 100%);
   border-radius: var(--radius-sm);
-  border: 1rpx solid #e0d6c8;
+  border: 1rpx solid var(--color-border);
 }
 
 .completion-header__label {
@@ -250,27 +250,27 @@
 .completion-header__bar-wrap {
   flex: 1;
   height: 10rpx;
-  background: rgba(192, 152, 128, 0.12);
+  background: rgba(var(--color-primary-rgb), 0.12);
   border-radius: 5rpx;
   overflow: hidden;
 }
 
 .completion-header__bar {
   height: 100%;
-  background: linear-gradient(90deg, #c09880 0%, #d4a892 100%);
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
   border-radius: 5rpx;
   transition: width 0.4s ease;
 }
 
 .completion-header__bar--done {
-  background: linear-gradient(90deg, #8bbf9f 0%, #a8d5ba 100%);
+  background: linear-gradient(90deg, var(--color-success) 0%, var(--color-success) 100%);
 }
 
 .completion-header__count {
   font-size: 22rpx;
   font-weight: 700;
   color: var(--color-primary);
-  background: rgba(192, 152, 128, 0.1);
+  background: rgba(var(--color-primary-rgb), 0.1);
   padding: 2rpx 12rpx;
   border-radius: 16rpx;
   white-space: nowrap;
@@ -343,6 +343,24 @@
   text-overflow: ellipsis;
   max-width: 240rpx;
   font-style: italic;
+}
+
+.today-item__finance {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 4rpx;
+}
+
+.today-finance__in {
+  font-size: var(--font-xs);
+  color: var(--color-income);
+  font-weight: 500;
+}
+
+.today-finance__out {
+  font-size: var(--font-xs);
+  color: var(--color-expense);
+  font-weight: 500;
 }
 
 .today-empty {

@@ -206,10 +206,11 @@ Page({
       success: (loginRes) => {
         if (loginRes.code) {
           const sessionToken = `sid_${generateSessionToken()}`
-          // 构建完整的用户信息对象（包含真实的头像和昵称）
+          // 构建完整的用户信息对象（包含真实的头像和昵称 + 微信绑定标记）
           const userInfo = {
             nickName: this.data.nickName.trim(),
             avatarUrl: avatarUrl,
+            wechatName: this.data.nickName.trim(),   // 标记微信已绑定
             loginMethod: 'wechat'
           }
           this._onLoginSuccess(sessionToken, userInfo)
@@ -231,14 +232,14 @@ Page({
       avatarUrl: this.data.avatarUrl || '',
       loginMethod: 'guest'
     }
-    this._onLoginSuccess(mockToken, userInfo)
+    this._onLoginSuccess(sessionToken, userInfo)
   },
 
   // ====================================================
   //  手机号登录
   // ====================================================
 
-  onGetPhone(e) {
+  async onGetPhone(e) {
     const { errMsg, code } = e.detail
     if (errMsg !== 'getPhoneNumber:ok') {
       wx.showToast({ title: '获取手机号失败', icon: 'none' })
@@ -247,14 +248,34 @@ Page({
 
     this.setData({ loading: true })
 
-    const sessionToken = `phone_${generateSessionToken()}`
-    const userInfo = {
-      phone: '已绑定手机号',
-      avatarUrl: this.data.avatarUrl || '',
-      nickName: this.data.nickName.trim() || '手机用户',
-      loginMethod: 'phone'
+    try {
+      // ① 调用云函数解密真实手机号
+      const phoneRes = await wx.cloud.callFunction({
+        name: 'syncUserInfo',
+        data: { action: 'decryptPhone', code }
+      })
+
+      const sessionToken = `phone_${generateSessionToken()}`
+
+      if (phoneRes.result && phoneRes.result.success && phoneRes.result.phoneNumber) {
+        const userInfo = {
+          phone: phoneRes.result.phoneNumber,
+          avatarUrl: this.data.avatarUrl || '',
+          nickName: this.data.nickName.trim() || '手机用户',
+          loginMethod: 'phone'
+        }
+        this._onLoginSuccess(sessionToken, userInfo)
+      } else {
+        // 解密失败（如未开通手机号能力），提示并停止
+        const errorMsg = (phoneRes.result && phoneRes.result.error) || '手机号获取失败'
+        wx.showToast({ title: errorMsg, icon: 'none', duration: 2000 })
+        this.setData({ loading: false })
+      }
+    } catch (err) {
+      console.error('[Login] 手机号登录失败', err)
+      this.setData({ loading: false })
+      wx.showToast({ title: '登录失败，请重试', icon: 'none' })
     }
-    this._onLoginSuccess(mockToken, userInfo)
   },
 
   // ====================================================
@@ -293,7 +314,7 @@ Page({
       nickName: this.data.nickName.trim() || email.split('@')[0],
       loginMethod: 'email'
     }
-    this._onLoginSuccess(mockToken, userInfo)
+    this._onLoginSuccess(sessionToken, userInfo)
   },
 
   // ====================================================
@@ -307,6 +328,18 @@ Page({
     app.globalData.userInfo = userInfo
 
     this.setData({ loading: false })
+
+    // 异步同步到云数据库
+    if (wx.cloud) {
+      wx.cloud.callFunction({
+        name: 'syncUserInfo',
+        data: { action: 'save', userInfo }
+      }).then(res => {
+        console.log('[Login] 云端同步成功', res.result)
+      }).catch(err => {
+        console.error('[Login] 云端同步失败', err)
+      })
+    }
     wx.showToast({ title: '登录成功', icon: 'success', duration: 800 })
     setTimeout(() => { this._goHome() }, 800)
   },

@@ -1,0 +1,9 @@
+{
+  "triggers": [
+    {
+      "name": "reminderScan",
+      "type": "timer",
+      "config": "*/30 * * * *"
+    }
+  ]
+}
